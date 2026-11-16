@@ -1,0 +1,23 @@
+{
+  "name": "com.paulnercessian.lucid-recorder",
+  "version": "0.1.0",
+  "displayName": "LUCID Recorder",
+  "description": "Records a frame, the unified action and state labels on every logic step of a Unity game, in the LUCID raw format used to train world models.",
+  "unity": "2021.3",
+  "license": "MIT",
+  "author": {
+    "name": "Paul Nercessian"
+  },
+  "keywords": [
+    "recording",
+    "dataset",
+    "world model"
+  ],
+  "samples": [
+    {
+      "displayName": "Runner Adapter Example",
+      "description": "Game adapter and autopilot for a lane runner (left, right, jump, slide), with TODO markers where your game code goes.",
+      "path": "Samples~/RunnerAdapterExample"
+    }
+  ]
+}
