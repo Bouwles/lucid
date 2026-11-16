@@ -19,6 +19,8 @@ LANE_TESTS = {
     "right": ("right", "lane", lambda s, v, n: v[-1] > s if s < n - 1 else v[-1] == n - 1),
     "none": (None, "lane", lambda s, v, n: v[-1] == s),
 }
+GROUNDED = VERTICAL_STATES.index("grounded")
+OPPOSITE = {"left": "right", "right": "left", "up": "down", "down": "up"}
 VERTICAL_TESTS = {
     "jump": ("jump", "vertical", lambda s, v, n: (v == VERTICAL_STATES.index("jumping")).any()),
     "down": ("down", "vertical", lambda s, v, n: (v == VERTICAL_STATES.index("sliding")).any()),
@@ -67,6 +69,9 @@ def controllability(
             start_v = predict(probe, frames[:, -1]).cpu().numpy()
             vals = predict(probe, pred.flatten(0, 1)).reshape(B, hold_steps).cpu().numpy()
             for b in range(B):
+                # Jump/slide only do anything from the ground, in the dream as in the game.
+                if probe_name == "vertical" and start_v[b] != GROUNDED:
+                    continue
                 ok = bool(check(start_v[b], vals[b], n_classes))
                 correct += ok
                 total += 1
@@ -79,31 +84,43 @@ def controllability(
     return results
 
 
-def real_controllability(episodes, probes_unused=None, hold_steps: int = 8) -> dict:
+def real_controllability(episodes, hold_steps: int = 8) -> dict:
     """The same checks on real recorded data, using the true labels (should be near 100%).
 
-    Real episodes rarely hold one button for exactly hold_steps from a clean start, so this
-    looks for every place an action starts and checks the label response over the next steps.
+    Real play rarely holds one button for exactly hold_steps from a clean start, so this finds
+    every place a button goes down and keeps only the cases comparable to the dream test: the
+    player stays alive, lane tests hold the button for the whole window without its opposite,
+    and jump/slide tests start on the ground.
     """
+    lane_eps = [e for e in episodes if "lane" in e.labels and (e.labels["lane"] >= 0).any()]
+    n_lanes = max((int(e.labels["lane"].max()) + 1 for e in lane_eps), default=0)
     out = {}
     for name, (button, key, check) in {**LANE_TESTS, **VERTICAL_TESTS}.items():
         if button is None:
             continue
         bi = BUTTONS.index(button)
+        opp = OPPOSITE.get(button)
+        n = n_lanes if key == "lane" else len(VERTICAL_STATES)
         correct = total = 0
-        for e in episodes:
-            if key not in e.labels or (key == "lane" and (e.labels["lane"] < 0).all()):
+        for e in lane_eps if key == "lane" else episodes:
+            if key not in e.labels:
                 continue
-            n = int(e.labels[key].max()) + 1 if key == "lane" else len(VERTICAL_STATES)
             b = e.buttons[:, bi]
-            starts = np.flatnonzero((b[1:] == 1) & (b[:-1] == 0)) + 1
-            for t in starts:
-                if t + hold_steps >= len(e) or not e.labels["alive"][t : t + hold_steps].all():
+            for t in np.flatnonzero((b[1:] == 1) & (b[:-1] == 0)) + 1:
+                w = slice(t, t + hold_steps)
+                if t + hold_steps >= len(e) or not e.labels["alive"][t : t + hold_steps + 1].all():
                     continue
-                s = int(e.labels[key][t])
+                if key == "lane" and (
+                    not e.buttons[w, bi].all()
+                    or (opp is not None and e.buttons[w, BUTTONS.index(opp)].any())
+                ):
+                    continue
+                if key == "vertical" and int(e.labels["vertical"][t]) != GROUNDED:
+                    continue
+                s_ = int(e.labels[key][t])
                 v = e.labels[key][t + 1 : t + 1 + hold_steps].astype(int)
                 total += 1
-                correct += bool(check(s, v, n))
+                correct += bool(check(s_, v, n))
         if total:
             out[name] = {"score": correct / total, "n": total}
     return out
