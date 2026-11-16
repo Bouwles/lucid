@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="A game imagined by a neural network, frame by frame.">
+  <title>LUCID</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1 class="wordmark">LUCID</h1>
+    <span id="status" class="status" data-state="idle">not connected</span>
+  </header>
+
+  <main>
+    <section class="stage" id="stage">
+      <div class="screens" id="screens">
+        <figure class="screen">
+          <canvas id="dream" width="256" height="256" aria-label="Dreamed game frame"></canvas>
+          <figcaption id="dream-label" hidden>dream</figcaption>
+        </figure>
+        <figure class="screen" id="real-wrap" hidden>
+          <canvas id="real" width="256" height="256" aria-label="Recorded real game frame"></canvas>
+          <figcaption>real recording</figcaption>
+        </figure>
+      </div>
+
+      <div class="overlay" id="start-screen">
+        <p class="lede">This game is being imagined by a neural network, frame by frame. There is no game engine.</p>
+        <button id="start" class="primary" type="button">Start</button>
+        <p class="hint">Arrows or WASD to move, Space to jump, Z and X for actions.</p>
+      </div>
+
+      <div class="overlay" id="connecting-screen" hidden>
+        <p>Connecting...</p>
+      </div>
+
+      <div class="overlay" id="busy-screen" hidden>
+        <p>The server is busy: all <span id="busy-max">?</span> player slots are taken.</p>
+        <button id="busy-retry" class="primary" type="button">Try again</button>
+      </div>
+
+      <button class="overlay clickable" id="disconnected-screen" type="button" hidden>
+        <span>Disconnected, click to reconnect.</span>
+        <span class="hint" id="disconnect-reason"></span>
+      </button>
+    </section>
+
+    <section class="stats" aria-label="Live stats">
+      <div><span class="k">fps</span> <span id="stat-fps" class="v">-</span></div>
+      <div><span class="k">frame</span> <span id="stat-ms" class="v">-</span><span class="k"> ms</span></div>
+      <div><span class="k">sampler steps</span> <span id="stat-steps" class="v">-</span></div>
+    </section>
+
+    <section class="controls" id="controls" aria-label="Controls">
+      <div class="row">
+        <span class="label">Game</span>
+        <div class="seg" id="games" role="radiogroup" aria-label="Game"></div>
+      </div>
+
+      <div class="row">
+        <span class="label">Sampler steps</span>
+        <div class="seg" id="steps" role="radiogroup" aria-label="Sampler steps"></div>
+      </div>
+
+      <div class="row">
+        <button id="reset" type="button">Reset dream</button>
+        <label class="toggle" id="sbs-wrap" hidden>
+          <input type="checkbox" id="sbs"> Side by side with a real recording
+        </label>
+      </div>
+
+      <details class="experiment" id="experiment" hidden>
+        <summary>Experiment: blend two games</summary>
+        <p class="hint">Mixes the two game embeddings the model was trained with. The model never saw a blended game, so expect strange results.</p>
+        <label class="toggle"><input type="checkbox" id="blend-on"> Blend</label>
+        <div class="blend">
+          <select id="blend-a" aria-label="First game"></select>
+          <input type="range" id="blend-alpha" min="0" max="1" step="0.05" value="0.5" aria-label="Blend amount">
+          <select id="blend-b" aria-label="Second game"></select>
+        </div>
+        <label class="toggle"><input type="checkbox" id="switch-live"> Switch game mid-dream instead of resetting</label>
+      </details>
+
+      <p class="error" id="error" role="status" hidden></p>
+    </section>
+
+    <section class="touch" id="touch" aria-label="Touch controls">
+      <div class="pad">
+        <button type="button" data-btn="up" class="t-up" aria-label="Up">&#9650;</button>
+        <button type="button" data-btn="left" class="t-left" aria-label="Left">&#9664;</button>
+        <button type="button" data-btn="right" class="t-right" aria-label="Right">&#9654;</button>
+        <button type="button" data-btn="down" class="t-down" aria-label="Down">&#9660;</button>
+      </div>
+      <button type="button" data-btn="jump" class="t-jump">Jump</button>
+    </section>
+  </main>
+
+  <footer>
+    <a href="https://github.com/Bouwles/lucid">Made by Paul Nercessian</a>
+  </footer>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

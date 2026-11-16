@@ -1,0 +1,328 @@
+:root {
+  --bg: #0d0e12;
+  --panel: #16181f;
+  --line: #262a35;
+  --text: #e6e7eb;
+  --muted: #8a8f9c;
+  --accent: #9d8cff;
+  --accent-ink: #0d0e12;
+  --danger: #ff6b6b;
+  --radius: 8px;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 var(--sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px env(safe-area-inset-bottom);
+}
+
+main {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.top {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 12px;
+}
+
+.wordmark {
+  margin: 0;
+  font: 600 18px/1 var(--mono);
+  letter-spacing: 0.3em;
+}
+
+.status {
+  font: 12px/1 var(--mono);
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.status[data-state="connecting"]::before { background: #e0c060; }
+.status[data-state="connected"]::before { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.status[data-state="busy"]::before,
+.status[data-state="disconnected"]::before { background: var(--danger); }
+
+/* Stage: canvases plus the overlays that cover them. */
+
+.stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 280px;
+  background: #000;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  padding: 12px;
+}
+
+.screens {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.screen { margin: 0; }
+
+.screen canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #050506;
+}
+
+.screen figcaption {
+  font: 11px/1 var(--mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding-top: 8px;
+  text-align: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(13, 14, 18, 0.92);
+  color: var(--text);
+  border: 0;
+  font: inherit;
+}
+
+.overlay[hidden] { display: none; }
+
+.overlay.clickable { cursor: pointer; width: 100%; }
+
+.lede {
+  max-width: 30em;
+  margin: 0;
+  font-size: clamp(17px, 2.4vw, 22px);
+  line-height: 1.45;
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Controls */
+
+button, select {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+button:hover, select:hover { border-color: var(--muted); }
+
+button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 600;
+  padding: 10px 28px;
+}
+
+.stats {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  font: 13px/1 var(--mono);
+}
+
+.stats .k { color: var(--muted); }
+.stats .v { color: var(--text); font-variant-numeric: tabular-nums; }
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 13px;
+  min-width: 7.5em;
+}
+
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.seg button {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 5px 12px;
+  font: 13px/1.4 var(--mono);
+}
+
+.seg button + button { border-left: 1px solid var(--line); }
+
+.seg button[aria-checked="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+input[type="checkbox"], input[type="range"] { accent-color: var(--accent); }
+
+.experiment {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.experiment summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.experiment[open] > * + * { margin-top: 10px; }
+.experiment > .toggle { display: flex; }
+
+.blend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.blend input[type="range"] { flex: 1; min-width: 80px; }
+
+.error {
+  margin: 0;
+  color: var(--danger);
+  font: 13px/1.4 var(--mono);
+}
+
+/* Touch controls, shown on touch devices only. */
+
+.touch {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px 8px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body.has-touch .touch { display: flex; }
+
+.touch button {
+  touch-action: none;
+  -webkit-touch-callout: none;
+  width: 64px;
+  height: 64px;
+  font-size: 20px;
+  border-radius: 12px;
+  padding: 0;
+}
+
+.touch button.held {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(3, 64px);
+  gap: 4px;
+}
+
+.t-up { grid-area: 1 / 2; }
+.t-left { grid-area: 2 / 1; }
+.t-right { grid-area: 2 / 3; }
+.t-down { grid-area: 3 / 2; }
+
+.touch .t-jump {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+footer {
+  padding: 28px 0 20px;
+  font-size: 13px;
+}
+
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--accent); }
+
+@media (max-width: 600px) {
+  .label { min-width: 0; width: 100%; }
+  .stats { gap: 14px; }
+}
