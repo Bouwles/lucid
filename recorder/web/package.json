@@ -1,0 +1,23 @@
+{
+  "name": "@paulnercessian/lucid-recorder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Records a browser game's canvas, inputs and state in LUCID's raw recording format.",
+  "author": "Paul Nercessian",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/lucidRecorder.js",
+  "exports": {
+    ".": "./dist/lucidRecorder.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit --strict --target es2022 --module es2022 --lib es2022,dom src/lucidRecorder.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}
