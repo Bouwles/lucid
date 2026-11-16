@@ -23,3 +23,13 @@ Choices I made along the way, with the reason for each.
 **Latent diffusion is half built.** The autoencoder and its training script exist. Training the world model on latents waits until pixel-space results show I need it.
 
 **Null-action comparison.** To show how much control the model learned, I'll compare against a copy trained with the action always hidden (`--set model.p_uncond_action=1.0`). Until that run exists, the report says "not measured".
+
+**The desktop app before the games.** The app spec builds Drift Kit first, but Unity isn't installed on my Mac yet, so I'm building the app shell first. The test track's dream is a placeholder until a real game and its dream exist.
+
+**Svelte for the app's interface.** It's small, needs little boilerplate and compiles away, which suits a lightweight Tauri app.
+
+**Dreams on ONNX Runtime in the base app.** The engine never imports PyTorch, so the installer stays small. The ONNX sampler matches the PyTorch one (there's a test for it), and on my Mac's CPU it ran the test track at about 32 FPS, against about 16 through the PyTorch server.
+
+**The test track ships inside the app.** Its dream pack (12 MB) is bundled, so the app can play a dream with no download, and smoke tests have a model to run. Real game dreams will be downloads from GitHub Releases, checked against a SHA-256 in the catalogue.
+
+**Downloads only from LUCID's own releases.** The engine refuses any download URL that isn't under the LUCID GitHub Releases, and rejects any zip with paths that would escape its folder.
