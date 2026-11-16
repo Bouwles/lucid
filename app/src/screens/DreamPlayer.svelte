@@ -4,7 +4,7 @@
   import * as engine from "../lib/engine";
   import { back } from "../lib/router.svelte";
   import { saveSettings, settings } from "../lib/settings.svelte";
-  import { smokeFail, smokeFrameDrawn } from "../lib/smoke";
+  import { smokeActive, smokeFail, smokeFrameDrawn } from "../lib/smoke";
   import { dur } from "../lib/motion";
   import type { Control, Game } from "../lib/types";
 
@@ -157,7 +157,7 @@
       send({ t: "config", sampler_steps: chosenSteps });
     }
     send({ t: "reset", game: id });
-    if (document.hidden) send({ t: "pause" });
+    if (isHidden()) send({ t: "pause" });
     lastSentButtons = -1;
     updateSending();
   }
@@ -182,7 +182,7 @@
   }
 
   function canSend(): boolean {
-    return helloSeen && ws !== null && ws.readyState === WebSocket.OPEN && !document.hidden;
+    return helloSeen && ws !== null && ws.readyState === WebSocket.OPEN && !isHidden();
   }
 
   function sendAct(): void {
@@ -241,8 +241,14 @@
     onInputChange();
   }
 
+  // A smoke test runs with no visible window, where browsers report the page as hidden and
+  // never fire animation frames. In smoke mode the dream plays and draws regardless.
+  function isHidden(): boolean {
+    return document.hidden && !smokeActive();
+  }
+
   function onVisibility(): void {
-    if (document.hidden) {
+    if (isHidden()) {
       heldKeys.clear();
       // Let go of every button before going quiet, so the dream isn't left holding a key.
       if (helloSeen) {
@@ -283,7 +289,8 @@
         }
         pending?.bmp.close();
         pending = { seq, bmp };
-        if (!rafId) rafId = requestAnimationFrame(drawPending);
+        if (smokeActive()) drawPending();
+        else if (!rafId) rafId = requestAnimationFrame(drawPending);
       })
       .catch(() => {});
   }
