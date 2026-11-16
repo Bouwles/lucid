@@ -1,4 +1,4 @@
-"""Dataset statistics report and visual checks (SPEC 12.4 and the Phase 4 sample grid)."""
+"""Dataset statistics report and a sample grid for checking actions by eye."""
 
 from __future__ import annotations
 
@@ -131,7 +131,7 @@ def sample_grid(episodes, path: str | Path, n: int = 12, k: int = 4, seed: int =
     """Random training windows: k context frames, then the target, labelled with the action.
 
     Check by eye that the action visibly matches what changes between the last context frame
-    and the target (SPEC 12 acceptance criteria).
+    and the target.
     """
     ds = WindowDataset(episodes, context_frames=k, action_history=False, pad_start="skip")
     rng = np.random.default_rng(seed)

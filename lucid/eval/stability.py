@@ -1,4 +1,4 @@
-"""Long-horizon stability without ground truth (SPEC 17.2)."""
+"""Long-horizon stability without ground truth."""
 
 from __future__ import annotations
 

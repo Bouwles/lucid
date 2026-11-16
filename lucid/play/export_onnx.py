@@ -1,5 +1,5 @@
-"""Export the world model's denoiser D(x; sigma, cond) to ONNX for client-side inference
-(SPEC 19.1 option B). The sampling loop then runs in JavaScript with onnxruntime-web.
+"""Export the world model's denoiser D(x; sigma, cond) to ONNX for client-side inference.
+The sampling loop then runs in JavaScript with onnxruntime-web on WebGPU.
 """
 
 from __future__ import annotations

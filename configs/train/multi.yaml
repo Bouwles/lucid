@@ -1,4 +1,4 @@
-# Rung 2+: one model, several games (SPEC 15). Ask Paul before running.
+# Stage 2+: one model, several games. Long run: expect many hours.
 base: small.yaml
 run_name: multi_v1
 data: { version: multi_v1, games: [runner, platformer], mixture: equal_per_game }

@@ -1,10 +1,10 @@
-"""Full evaluation of a world model checkpoint (SPEC 17).
+"""Full evaluation of a world model checkpoint.
 
 python scripts/evaluate.py --checkpoint runs/<run>/best.pt [--probes data/processed/<v>/probes.pt]
     [--compare runs/<baseline>/best.pt runs/<no_ctx_noise>/best.pt] [--to-docs]
 
 Writes results.json, results.md, plots and GIFs to runs/<run>/eval_<step>/. With --to-docs the
-Markdown section is also appended to docs/results.md, marked as pending the eval-auditor check.
+Markdown section is also appended to docs/results.md, marked as not yet re-checked against the run logs.
 """
 
 import argparse
@@ -306,7 +306,7 @@ def main() -> None:
     if args.to_docs:
         with open("docs/results.md", "a") as f:
             f.write("\n" + md)
-        print("appended to docs/results.md (have the eval-auditor check it before relying on it)")
+        print("appended to docs/results.md (re-check it against the run logs before relying on it)")
 
 
 if __name__ == "__main__":

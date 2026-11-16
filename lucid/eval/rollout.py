@@ -1,4 +1,4 @@
-"""Rollouts (SPEC 13.4): teacher-forced (always real context) and free-running (own outputs)."""
+"""Rollouts: teacher-forced (always real context) and free-running (own outputs)."""
 
 from __future__ import annotations
 

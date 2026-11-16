@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Lucid.Recorder
 {
     /// <summary>
-    /// Shared autopilot logic (SPEC 10.5). Mixes four behaviours, chosen per episode or switched
+    /// Shared autopilot logic. Mixes four behaviours, chosen per episode or switched
     /// within an episode. A game subclass supplies the look-ahead (<see cref="DecideAvoidance"/>)
     /// and the buttons it uses. All randomness comes from <see cref="Rng"/>, which is seeded from the
     /// episode seed, so a session with a fixed session seed is reproducible.

@@ -1,4 +1,4 @@
-"""State probes (SPEC 17.3): small CNNs trained on real frames only, to read game state from
+"""State probes: small CNNs trained on real frames only, to read game state from
 frames. Running them on dreamed frames turns "does the dream make sense?" into numbers.
 """
 

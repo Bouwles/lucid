@@ -1,4 +1,4 @@
-"""EDM diffusion world model (SPEC 14), following Karras et al. 2022, "Elucidating the Design
+"""EDM diffusion world model, following Karras et al. 2022, "Elucidating the Design
 Space of Diffusion-Based Generative Models", Table 1 (preconditioning, training noise
 distribution and loss weighting).
 """
@@ -111,7 +111,7 @@ class DiffusionWorldModel(nn.Module):
     # --------------------------------------------------------------- training
 
     def sample_context_noise(self, B: int, device) -> torch.Tensor:
-        """SPEC 14.3: sigma_ctx is 0 with probability p_clean, else uniform in [0, max]. [B]."""
+        """Context noise level: sigma_ctx is 0 with probability p_clean, else uniform in [0, max]. [B]."""
         if not self.ctx_enabled:
             return torch.zeros(B, device=device)
         s = torch.rand(B, device=device) * self.ctx_max

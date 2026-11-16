@@ -1,4 +1,4 @@
-# Rung 4 (SPEC 16): 64 -> 256 upsampler. Needs a dataset built with full_resolution: [256, 256].
+# Stage 4: 64 to 256 upsampler. Needs a dataset built with full_resolution: [256, 256].
 base: ../model/upsampler.yaml
 run_name: upsampler_runner_v1
 data: { version: runner_v1, games: [runner], resolution: [256, 256], frame_skip: 4, num_workers: 4 }

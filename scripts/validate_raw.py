@@ -1,4 +1,4 @@
-"""Validate raw recording sessions (SPEC 12.1) without building anything."""
+"""Validate raw recording sessions without building anything."""
 
 import argparse
 import sys

@@ -1,4 +1,4 @@
-"""Print the Python/PyTorch/device setup and write it to docs/hardware.md (SPEC Phase 0)."""
+"""Print the Python/PyTorch/device setup and write it to docs/hardware.md."""
 
 import argparse
 import platform

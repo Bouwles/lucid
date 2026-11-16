@@ -1,4 +1,4 @@
-"""Train the small frame autoencoder for the optional latent-diffusion path (SPEC 14.9 item 8).
+"""Train the small frame autoencoder for the optional latent-diffusion path.
 
 Check the saved reconstructions by eye: small details such as obstacles must survive.
 """

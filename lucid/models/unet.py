@@ -43,7 +43,7 @@ class _Level(nn.Module):
 
 
 class ConditionalUNet(nn.Module):
-    """UNet with adaptive-GroupNorm conditioning (SPEC 13.1).
+    """UNet with adaptive-GroupNorm conditioning.
 
     Images: `x` [B, 3, H, W] (the frame being denoised or predicted) is concatenated with
     `cond_images` [B, C_cond, H, W] (context frames as channels, or an upscaled low-res frame).

@@ -1,4 +1,4 @@
-"""Controllability (SPEC 17.4): does the dream obey the player?
+"""Controllability: does the dream obey the player?
 
 From many real starting contexts, roll out short sequences that differ only in the held action,
 read the result with the probes, and count how often the response matches the action.

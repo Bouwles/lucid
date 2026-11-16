@@ -35,7 +35,7 @@ public interface IEpisodeControl
 }
 ```
 
-**An action source**, which implements `IActionSource` and decides what is pressed each step. Three come with the package: `HumanActionSource` (keyboard, optional mouse look), `ReplayActionSource` (replays a recorded episode) and `AutoPilotBase`. For the autopilot, a game subclasses `AutoPilotBase` and implements one look-ahead method, `DecideAvoidance(state)`, that says what a competent player would press right now. The base class mixes four behaviours from SPEC section 10.5: random actions held for a short time, the competent avoider, a noisy avoider that sometimes reacts wrongly or late, and idling. The mix, the hold times and the mistake chance are set in the `RecorderConfig` and saved in every episode's `meta.json`.
+**An action source**, which implements `IActionSource` and decides what is pressed each step. Three come with the package: `HumanActionSource` (keyboard, optional mouse look), `ReplayActionSource` (replays a recorded episode) and `AutoPilotBase`. For the autopilot, a game subclasses `AutoPilotBase` and implements one look-ahead method, `DecideAvoidance(state)`, that says what a competent player would press right now. The base class mixes four behaviours: random actions held for a short time, the competent avoider, a noisy avoider that sometimes reacts wrongly or late, and idling. The mix, the hold times and the mistake chance are set in the `RecorderConfig` and saved in every episode's `meta.json`.
 
 `ActionMapper` is the per-game table from the game's control names ("slide", "fire") to the eight unified buttons, plus the look scale for mouse-look games.
 

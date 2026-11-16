@@ -1,4 +1,4 @@
-"""Export a world model's denoiser to ONNX for the WebGPU client (SPEC 19.1 option B)."""
+"""Export a world model's denoiser to ONNX for the WebGPU client."""
 
 import argparse
 

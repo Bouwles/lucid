@@ -63,7 +63,7 @@ def sample(
 def refine(
     denoise: Denoiser, x: torch.Tensor, sigma: float, generator: torch.Generator | None = None
 ) -> torch.Tensor:
-    """Refinement sampling (SPEC 3.9, the SDEdit idea): re-noise a sample a little, denoise once."""
+    """Refinement sampling (the SDEdit idea): re-noise a sample a little, denoise once."""
     noise = torch.randn(x.shape, generator=generator, device=x.device, dtype=x.dtype)
     s = torch.full((x.shape[0],), sigma, device=x.device, dtype=x.dtype)
     return denoise(x + sigma * noise, s)

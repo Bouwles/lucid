@@ -1,4 +1,4 @@
-"""Validate raw recordings (SPEC 12.1). Failed episodes are reported and excluded, never repaired."""
+"""Validate raw recordings. Failed episodes are reported and excluded, never repaired."""
 
 from __future__ import annotations
 

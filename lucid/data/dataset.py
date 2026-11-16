@@ -1,4 +1,4 @@
-"""PyTorch datasets over a processed LUCID dataset (SPEC 12.3).
+"""PyTorch datasets over a processed LUCID dataset.
 
 Everything here returns uint8 frames on the CPU. Convert to float in [-1, 1] on the GPU with
 `to_model_space`, which keeps the data loader cheap.
@@ -192,7 +192,7 @@ class SequenceDataset(Dataset):
 
 
 class UpsampleDataset(Dataset):
-    """Pairs of (low-res, high-res) real frames plus the previous high-res frame (SPEC 16.1).
+    """Pairs of (low-res, high-res) real frames plus the previous high-res frame.
 
     Returns low uint8 [3, h, w], high uint8 [3, H, W], prev_high uint8 [3, H, W] (a copy of high's
     first frame at an episode start, with has_prev=False), game_id.

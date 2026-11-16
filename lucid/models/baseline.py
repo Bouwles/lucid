@@ -1,4 +1,4 @@
-"""The MSE baseline (SPEC 13.2): predict the next frame directly. Expected to be blurry."""
+"""The MSE baseline: predict the next frame directly. Expected to be blurry."""
 
 from __future__ import annotations
 

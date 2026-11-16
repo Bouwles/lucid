@@ -1,4 +1,4 @@
-"""Diffusion upsampler (SPEC 16): low-res frame (+ previous high-res frame) -> sharp high-res frame.
+"""Diffusion upsampler: low-res frame (+ previous high-res frame) -> sharp high-res frame.
 
 It never sees the action, so it cannot change game logic; it only adds detail.
 """

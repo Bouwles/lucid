@@ -1,4 +1,4 @@
-"""Building blocks for the conditioned UNet (SPEC 13.1)."""
+"""Building blocks for the conditioned UNet."""
 
 from __future__ import annotations
 
@@ -44,7 +44,7 @@ class ScalarEmbedding(nn.Module):
 
 
 class ActionEmbedding(nn.Module):
-    """Embed unified actions (SPEC 6.1).
+    """Embed unified actions.
 
     buttons: [B, 8] or [B, K, 8] multi-hot floats; look: [B, 2] or [B, K, 2] in [-1, 1].
     drop: optional bool [B]; True replaces the whole action with a learned null embedding, which

@@ -1,4 +1,4 @@
-"""Build a processed, versioned dataset from validated raw recordings (SPEC 12.2)."""
+"""Build a processed, versioned dataset from validated raw recordings."""
 
 from __future__ import annotations
 

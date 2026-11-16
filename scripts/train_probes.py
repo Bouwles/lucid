@@ -1,4 +1,4 @@
-"""Train the state probes on real frames only (SPEC 17.3): python scripts/train_probes.py --config configs/train/small.yaml"""
+"""Train the state probes on real frames only: python scripts/train_probes.py --config configs/train/small.yaml"""
 
 import argparse
 from pathlib import Path

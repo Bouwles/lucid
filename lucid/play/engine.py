@@ -1,4 +1,4 @@
-"""DreamEngine: the world model wrapped as a game engine with a step(action) interface (SPEC 18)."""
+"""DreamEngine: the world model wrapped as a game engine with a step(action) interface."""
 
 from __future__ import annotations
 
@@ -164,7 +164,7 @@ class DreamEngine:
         return _frame_out(self.context[:, -1])
 
     def set_game(self, game_id: str) -> None:
-        """Switch game mid-rollout without resetting the context (the dream morphs, SPEC 15.4)."""
+        """Switch game mid-rollout without resetting the context (the dream morphs into the other game)."""
         self.game = game_id
         self._game_input = self._game_tensor(game_id)
 

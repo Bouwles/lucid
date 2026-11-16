@@ -1,4 +1,4 @@
-"""One training loop for every LUCID model (SPEC 13.3)."""
+"""One training loop for every LUCID model."""
 
 from __future__ import annotations
 
@@ -196,7 +196,7 @@ def train(
             scaler.unscale_(opt)
             gnorm = torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.train.grad_clip)
             if not torch.isfinite(gnorm):
-                log(f"step {step}: non-finite gradient norm, skipping update (see SPEC Appendix C)")
+                log(f"step {step}: non-finite gradient norm, skipping update")
                 scaler.update()
                 step += 1
                 continue
@@ -310,7 +310,7 @@ def validate(cfg, model, val_ds, val_eps, device, amp, logger, step, run_dir, lp
 
 def _action_grid(cfg, model, val_ds, device, amp, gen, logger, step, out_dir):
     """Rows: fixed contexts. Columns: the last context frame, then the prediction for each action.
-    Identical columns mean the model is ignoring the action (SPEC 14.7)."""
+    Identical columns mean the model is ignoring the action."""
     games = load_games(cfg.games_file)
     used = set()
     for g in cfg.data.games:

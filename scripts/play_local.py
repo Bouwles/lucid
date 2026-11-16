@@ -1,4 +1,4 @@
-"""Play the dream in a local window with the keyboard (SPEC 18 acceptance check).
+"""Play the dream in a local window with the keyboard.
 
 Arrows/WASD move, space jumps, Z/X are action buttons, R resets, 1-9 switch game, Esc quits.
 Needs pygame: pip install -e ".[play]".

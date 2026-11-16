@@ -1,4 +1,4 @@
-"""README media (SPEC 20, 26.3): side-by-side real | dream clips driven by the same recorded
+"""README media: side-by-side real | dream clips driven by the same recorded
 actions, an optional ablation comparison, a game-switching clip, and a folder of random samples.
 
 python scripts/make_gifs.py --checkpoint runs/<run>/best.pt [--compare runs/<other>/best.pt] --out docs/media

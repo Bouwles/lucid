@@ -1,4 +1,4 @@
-"""Does it look real? (SPEC 17.5 and 22.8)
+"""Does it look real?
 
 1. A real-vs-dream classifier: its accuracy over rollout time is a realism curve, where 50%
    means it cannot tell them apart.

@@ -1,4 +1,4 @@
-# Demo model. Ask Paul before running: expected well over 2 hours.
+# Demo model. Long run: expect well over 2 hours.
 base: ../model/base.yaml
 run_name: base_runner_v1
 seed: 0

@@ -76,7 +76,7 @@ namespace Lucid.Recorder
         }
     }
 
-    /// <summary>Autopilot mix (SPEC 10.5). Saved into each episode's meta.json.</summary>
+    /// <summary>Autopilot mix. Saved into each episode's meta.json.</summary>
     [Serializable]
     public sealed class AutoPilotSettings
     {

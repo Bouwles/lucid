@@ -1,4 +1,4 @@
-"""FastAPI server for the browser demo (SPEC 19.1 option A). Protocol: docs/formats.md.
+"""FastAPI server for the browser demo. Protocol: docs/formats.md.
 
 One DreamEngine per connected player (sharing one model's weights), a cap on players, idle
 timeouts, and a health check. Nothing personal about visitors is logged: only counts and timings.

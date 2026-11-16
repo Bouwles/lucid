@@ -1,4 +1,4 @@
-"""Small convolutional autoencoder for the optional latent-diffusion path (SPEC 14.9 item 8).
+"""Small convolutional autoencoder for the optional latent-diffusion path.
 
 Compresses frames [B, 3, H, W] to latents [B, latent_channels, H/f, W/f] with f = 2 ** len(mults).
 Only the autoencoder exists so far; wiring the world model to train on latents is future work

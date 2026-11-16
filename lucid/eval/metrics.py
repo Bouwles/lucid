@@ -1,4 +1,4 @@
-"""Image metrics (SPEC 13.5). Inputs are float images in [-1, 1], shape [B, 3, H, W]."""
+"""Image metrics. Inputs are float images in [-1, 1], shape [B, 3, H, W]."""
 
 from __future__ import annotations
 
@@ -64,7 +64,7 @@ def frame_metrics(
 
 
 def curve_steps(n: int) -> list[int]:
-    """1, 2, 4, 8, ... up to n (SPEC 13.5): the steps at which rollout curves are reported."""
+    """1, 2, 4, 8, ... up to n: the steps at which rollout curves are reported."""
     out, s = [], 1
     while s <= n:
         out.append(s)

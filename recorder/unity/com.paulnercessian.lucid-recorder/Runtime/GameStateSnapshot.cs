@@ -13,7 +13,7 @@ namespace Lucid.Recorder
     }
 
     /// <summary>
-    /// Label state for one logic step (SPEC 6.3). Used for evaluation probes and dataset
+    /// Label state for one logic step. Used for evaluation probes and dataset
     /// statistics only; it is never a model input.
     /// </summary>
     [Serializable]
