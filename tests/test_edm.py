@@ -114,3 +114,12 @@ def test_generate_shape_and_range():
         refinement=True,
     )
     assert out.shape == (2, 3, 16, 16) and out.min() >= -1 and out.max() <= 1
+
+
+def test_motion_weighted_loss_is_finite_and_differs():
+    b = _batch()
+    torch.manual_seed(5)
+    plain, _ = _model(motion_weight=0.0).training_loss(b)
+    torch.manual_seed(5)
+    weighted, _ = _model(motion_weight=8.0).training_loss(b)
+    assert torch.isfinite(weighted) and abs(plain.item() - weighted.item()) > 1e-6

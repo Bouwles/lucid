@@ -39,7 +39,16 @@ def build_model(cfg: RunConfig, sigma_data: float | None = None) -> torch.nn.Mod
         )
         cn = cfg.context_noise
         return DiffusionWorldModel(
-            unet, k, sd, m.p_mean, m.p_std, m.p_uncond_action, cn.enabled, cn.p_clean, cn.max_sigma
+            unet,
+            k,
+            sd,
+            m.p_mean,
+            m.p_std,
+            m.p_uncond_action,
+            cn.enabled,
+            cn.p_clean,
+            cn.max_sigma,
+            m.motion_weight,
         )
     if m.type == "baseline":
         unet = ConditionalUNet(

@@ -68,6 +68,7 @@ class DiffusionWorldModel(nn.Module):
         context_noise_enabled: bool = True,
         context_noise_p_clean: float = 0.2,
         context_noise_max: float = 0.7,
+        motion_weight: float = 0.0,
     ):
         super().__init__()
         self.unet = unet
@@ -78,6 +79,7 @@ class DiffusionWorldModel(nn.Module):
         self.ctx_enabled = context_noise_enabled
         self.ctx_p_clean = context_noise_p_clean
         self.ctx_max = context_noise_max
+        self.motion_weight = motion_weight
 
     # --------------------------------------------------------------- the denoiser
 
@@ -142,7 +144,16 @@ class DiffusionWorldModel(nn.Module):
             drop,
         ).float()
         f_target = (y - _b(c_skip) * x) / _b(c_out)
-        per_sample = F.mse_loss(f, f_target, reduction="none").mean(dim=(1, 2, 3))
+        err = F.mse_loss(f, f_target, reduction="none").mean(dim=1)  # [B, H, W]
+        if self.motion_weight > 0:
+            # Pixels that change between the last context frame and the target count more. That is
+            # where the effect of an action shows up; without this the loss is dominated by the
+            # static background and the model can do well while ignoring the controls.
+            moving = ((y - batch["context"][:, -1]).abs().mean(dim=1) > 0.04).float()
+            w = 1.0 + self.motion_weight * moving
+            per_sample = (err * w).sum(dim=(1, 2)) / w.sum(dim=(1, 2))
+        else:
+            per_sample = err.mean(dim=(1, 2))
         loss = per_sample.mean()
         with torch.no_grad():
             low = sigma < self.sigma_data
