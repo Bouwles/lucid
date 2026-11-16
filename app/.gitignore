@@ -1,0 +1,21 @@
+# dependencies and build output
+node_modules
+dist
+dist-ssr
+*.local
+*.log
+
+# tauri
+src-tauri/target
+src-tauri/gen/schemas
+src-tauri/binaries/*
+!src-tauri/binaries/.gitkeep
+
+# editors
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# dream pack weights (large; bundled at build time, not committed)
+src-tauri/resources/models/**/*.onnx.data
