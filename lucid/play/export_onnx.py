@@ -13,7 +13,10 @@ from lucid.models.edm import DiffusionWorldModel
 
 
 class DenoiserForExport(nn.Module):
-    """Fixed-signature wrapper: (x, sigma, context, buttons, look, game_id, sigma_ctx) -> D.
+    """Fixed-signature wrapper: (x, sigma, context, buttons, look, game_id, sigma_ctx, drop_action) -> D.
+
+    drop_action [1] float: 1 swaps the action for the learned null action, which is what
+    classifier-free guidance needs (run once with 0, once with 1, and push away from the second).
 
     x [1, 3, H, W], sigma [1], context [1, k, 3, H, W], buttons [1, k, 8] (or [1, 8]),
     look [1, k, 2] (or [1, 2]), game_id [1] int64, sigma_ctx [1].
@@ -23,8 +26,10 @@ class DenoiserForExport(nn.Module):
         super().__init__()
         self.model = model
 
-    def forward(self, x, sigma, context, buttons, look, game_id, sigma_ctx):
-        return self.model.denoise(x, sigma, context, buttons, look, game_id, sigma_ctx)
+    def forward(self, x, sigma, context, buttons, look, game_id, sigma_ctx, drop_action):
+        return self.model.denoise(
+            x, sigma, context, buttons, look, game_id, sigma_ctx, drop_action > 0.5
+        )
 
 
 def export_denoiser(model: DiffusionWorldModel, cfg, path: str | Path, opset: int = 18) -> Path:
@@ -42,13 +47,23 @@ def export_denoiser(model: DiffusionWorldModel, cfg, path: str | Path, opset: in
         torch.zeros(1, a, 2) if a else torch.zeros(1, 2),
         torch.zeros(1, dtype=torch.long),
         torch.zeros(1),
+        torch.zeros(1),
     )
     path = Path(path)
     torch.onnx.export(
         DenoiserForExport(model),
         args,
         str(path),
-        input_names=["x", "sigma", "context", "buttons", "look", "game_id", "sigma_ctx"],
+        input_names=[
+            "x",
+            "sigma",
+            "context",
+            "buttons",
+            "look",
+            "game_id",
+            "sigma_ctx",
+            "drop_action",
+        ],
         output_names=["denoised"],
         opset_version=opset,
     )

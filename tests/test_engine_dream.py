@@ -61,3 +61,15 @@ def test_reset_and_step_shapes(pack):
         f = d.step(b)
         assert f.shape == (16, 16, 3)
     assert d.fps > 0
+
+
+def test_guidance_input_changes_the_sample(pack):
+    d = Dream(pack[0], seed=0)
+    d.reset(0)
+    assert d.supports_guidance
+    noise = np.random.default_rng(3).standard_normal((1, 3, 16, 16)).astype(np.float32)
+    ctx_noise = np.random.default_rng(4).standard_normal(d.context.shape).astype(np.float32)
+    plain = d.generate(noise=noise, ctx_noise=ctx_noise)
+    d.cfg_scale = 3.0
+    guided = d.generate(noise=noise, ctx_noise=ctx_noise)
+    assert np.abs(plain - guided).max() > 1e-4

@@ -127,6 +127,9 @@ class Dream:
             float(s["rho"]),
         )
         self.context_noise = float(s.get("context_noise", 0.1))
+        # Classifier-free guidance strengthens how much the controls matter (packs exported with a
+        # drop_action input only). 1.0 means off.
+        self.cfg_scale = float(s.get("cfg_scale") or 1.0)
         self.game_id = int(m.get("game_id", 0))
         self.rng = np.random.default_rng(seed)
         self.session = pack.session()
@@ -137,24 +140,36 @@ class Dream:
 
     # --------------------------------------------------------------- the denoiser and sampler
 
+    @property
+    def supports_guidance(self) -> bool:
+        return "drop_action" in {i.name for i in self.session.get_inputs()}
+
     def denoise(
-        self, x: np.ndarray, sigma: float, context: np.ndarray, sigma_ctx: float
+        self, x: np.ndarray, sigma: float, context: np.ndarray, sigma_ctx: float, drop: bool = False
     ) -> np.ndarray:
         b = self.buttons if self.history else self.buttons[:, -1]
         lk = self.look if self.history else self.look[:, -1]
-        out = self.session.run(
-            None,
-            {
-                "x": x.astype(np.float32),
-                "sigma": np.array([sigma], np.float32),
-                "context": context.astype(np.float32),
-                "buttons": b,
-                "look": lk,
-                "game_id": np.array([self.game_id], np.int64),
-                "sigma_ctx": np.array([sigma_ctx], np.float32),
-            },
-        )
-        return out[0]
+        feeds = {
+            "x": x.astype(np.float32),
+            "sigma": np.array([sigma], np.float32),
+            "context": context.astype(np.float32),
+            "buttons": b,
+            "look": lk,
+            "game_id": np.array([self.game_id], np.int64),
+            "sigma_ctx": np.array([sigma_ctx], np.float32),
+        }
+        if self.supports_guidance:
+            feeds["drop_action"] = np.array([1.0 if drop else 0.0], np.float32)
+        return self.session.run(None, feeds)[0]
+
+    def guided_denoise(
+        self, x: np.ndarray, sigma: float, context: np.ndarray, sigma_ctx: float
+    ) -> np.ndarray:
+        d = self.denoise(x, sigma, context, sigma_ctx)
+        if self.cfg_scale != 1.0 and self.supports_guidance:
+            d_null = self.denoise(x, sigma, context, sigma_ctx, drop=True)
+            d = d_null + self.cfg_scale * (d - d_null)
+        return d
 
     def generate(
         self, noise: np.ndarray | None = None, ctx_noise: np.ndarray | None = None
@@ -176,7 +191,7 @@ class Dream:
         x = noise * sigmas[0]
         for i in range(self.steps):
             s, s_next = float(sigmas[i]), float(sigmas[i + 1])
-            d = (x - self.denoise(x, s, context, cn)) / s
+            d = (x - self.guided_denoise(x, s, context, cn)) / s
             x = x + (s_next - s) * d
         return np.clip(x, -1.0, 1.0)
 

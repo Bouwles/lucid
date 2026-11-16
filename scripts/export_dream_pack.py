@@ -116,6 +116,7 @@ def main() -> None:
         "look": lk,
         "game_id": np.array([games[game]], np.int64),
         "sigma_ctx": np.array([0.1], np.float32),
+        "drop_action": np.array([0.0], np.float32),
     }
     onnx_out = sess.run(None, feeds)[0]
     with torch.no_grad():
