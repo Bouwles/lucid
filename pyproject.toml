@@ -27,7 +27,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.5", "httpx>=0.27"]
 play = ["pygame>=2.5"]
-export = ["onnx>=1.16"]
+export = ["onnx>=1.16", "onnxscript>=0.1", "onnxruntime>=1.18"]
 
 [tool.setuptools.packages.find]
 include = ["lucid*"]
