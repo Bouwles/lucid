@@ -1,0 +1,36 @@
+# data and outputs
+/data/
+/runs/
+/checkpoints/
+*.pt
+*.ckpt
+*.npz
+*.npy
+*.zarr/
+*.onnx
+*.mp4
+!docs/media/**/*.mp4
+
+# python
+__pycache__/
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# notebooks
+notebooks/.ipynb_checkpoints/
+
+# unity
+recorder/unity/**/Library/
+recorder/unity/**/Temp/
+*.meta.tmp
+
+# web recorder
+recorder/web/node_modules/
+
+# os
+.DS_Store
+
+# secrets
+.env
