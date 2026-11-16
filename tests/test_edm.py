@@ -118,6 +118,9 @@ def test_generate_shape_and_range():
 
 def test_motion_weighted_loss_is_finite_and_differs():
     b = _batch()
+    # Only a small patch changes between the last context frame and the target.
+    b["target"] = b["context"][:, -1].clone()
+    b["target"][:, :, 4:8, 4:8] += 0.5
     torch.manual_seed(5)
     plain, _ = _model(motion_weight=0.0).training_loss(b)
     torch.manual_seed(5)
