@@ -1,0 +1,7 @@
+model:
+  type: edm_unet
+  base_channels: 96
+  channel_mults: [1, 2, 3, 4]
+  res_blocks_per_level: 2
+  attention_resolutions: [8]
+  cond_dim: 256

@@ -1,0 +1,9 @@
+model:
+  type: upsampler
+  base_channels: 64
+  channel_mults: [1, 1, 2, 2, 4]
+  res_blocks_per_level: 1
+  attention_resolutions: []
+  cond_dim: 256
+  low_resolution: [64, 64]
+  use_prev_frame: true
