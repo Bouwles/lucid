@@ -1,0 +1,15 @@
+{
+  "format_version": 1,
+  "session_id": "golden_session",
+  "game_id": "synthetic",
+  "created_utc": "2026-11-16T05:39:53Z",
+  "recorder_version": "synthetic-0.1.0",
+  "game_build_version": "synthetic",
+  "unity_version": null,
+  "recording_resolution": [
+    32,
+    32
+  ],
+  "logic_timestep": 0.06666666666666667,
+  "frame_format": "png"
+}

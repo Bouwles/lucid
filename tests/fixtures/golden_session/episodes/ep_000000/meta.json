@@ -1,0 +1,24 @@
+{
+  "format_version": 1,
+  "episode_id": "ep_000000",
+  "session_id": "golden_session",
+  "game_id": "synthetic",
+  "seed": 2029167941,
+  "game_build_version": "synthetic",
+  "recorder_version": "synthetic-0.1.0",
+  "action_source": {
+    "name": "autopilot",
+    "settings": {
+      "mode": "noisy"
+    }
+  },
+  "recording_resolution": [
+    32,
+    32
+  ],
+  "logic_timestep": 0.06666666666666667,
+  "look_scale": null,
+  "num_steps": 24,
+  "corrupted": false,
+  "corruption_reason": null
+}
