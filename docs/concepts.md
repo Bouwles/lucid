@@ -1,6 +1,6 @@
 # Concepts
 
-Plain-English explanations of the ideas LUCID uses. Each section points at the code that implements it. Background: SPEC.md section 3.
+The ideas LUCID uses, in plain English, each with a pointer to the code. References are in [references.md](references.md).
 
 ## World model and rollouts
 

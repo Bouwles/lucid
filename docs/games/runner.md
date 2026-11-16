@@ -1,7 +1,7 @@
 # Endless runner  (game_id: runner)
 
 Engine: Unity <version> | Genre: endless runner | Camera: <fill in>
-Controls and unified mapping: <fill in, see SPEC.md section 6.1 and configs/games.yaml>
+Controls and unified mapping: <fill in, see docs/formats.md and configs/games.yaml>
 Visual elements: <fill in>
 Randomness: <how obstacles spawn, seedable?>
 Speed changes over time: <yes/no>
@@ -12,7 +12,7 @@ Difficulty for LUCID (1-5) and why: <fill in>
 
 ## Recording changes
 
-<every change made for the recording scene or the LUCID_RECORDING build, SPEC 9.2>
+<every change made for the recording scene or the LUCID_RECORDING build>
 
 ## Determinism check
 

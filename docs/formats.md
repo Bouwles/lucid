@@ -1,6 +1,6 @@
 # File formats and protocols
 
-The contracts between LUCID's parts. The Unity recorder, the web recorder, `lucid/data/format.py`, `lucid/play/server.py` and `web/main.js` all follow this file. Change it only together with every side that uses it, and add a line to `docs/decisions.md`. Background: SPEC.md sections 6, 10.3 and Appendix B.
+The contracts between LUCID's parts. The Unity recorder, the web recorder, `lucid/data/format.py`, `lucid/play/server.py` and `web/main.js` all follow this file. Change it only together with every side that uses it, and add a line to `docs/decisions.md`.
 
 ## Unified action
 

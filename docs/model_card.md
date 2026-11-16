@@ -1,6 +1,6 @@
 # Model card
 
-Written at Phase 12 (SPEC 20.4) once a demo model is chosen. Not written yet.
+Filled in once a demo model is chosen.
 
 - Architecture:
 - Training data:

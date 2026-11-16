@@ -1,27 +1,25 @@
 # Decisions
 
-One entry per decision not covered by SPEC.md: date, decision, one or two sentences of why.
+Choices I made along the way, with the reason for each.
 
-**2026-11-16. Resolution and frame rate.** Record at 256 on the short side and the game's native logic rate. Train at 64x64 with `frame_skip: 4` (60 Hz logic to 15 Hz training), as SPEC 3.3 suggests. The originals are kept, so both can change later without re-recording.
+**Resolution and frame rate.** Record at 256 on the short side and the game's native logic rate. Train at 64x64, keeping every 4th logic step (60 Hz down to 15 Hz). The originals are kept, so both can change later without recording again.
 
-**2026-11-16. Processed frames are `.npy`, not inside the `.npz`.** Appendix B puts frames in the `.npz`, but `.npz` files can't be memory-mapped. A base-size dataset (1M frames at 64x64) is about 12 GB, so frames go in a separate `.frames.npy` per episode and are memory-mapped. Labels and actions stay in the small `.npz`. See docs/formats.md.
+**Frames are stored as `.npy`, not inside the `.npz`.** A `.npz` can't be memory-mapped, and a full dataset (1M frames at 64x64) is about 12 GB. So frames go in their own `.frames.npy` per episode and are read straight from disk. Labels and actions stay in a small `.npz`.
 
-**2026-11-16. Default frame-skip action rule is `first_non_none`.** This is the rule from SPEC 12.2: the first sub-step action that presses anything, otherwise none, so a jump pressed on sub-step 3 isn't lost. `first` and `union` are also implemented and tested. Look is averaged over the interval so it stays in [-1, 1].
+**Frame-skip action rule: `first_non_none`.** When 4 logic steps become one training step, the kept action is the first one that actually presses something. A jump on the third sub-step still counts. `first` and `union` exist too and are tested. Look is averaged so it stays in [-1, 1].
 
-**2026-11-16. Hash-based splits.** Each episode's split comes from a hash of `session/episode` plus a seed, not from shuffling. Adding new sessions therefore never moves an old episode between train and test.
+**Splits come from a hash.** Each episode's split is decided by hashing its session and episode id. Recording more sessions never moves an old episode from train to test.
 
-**2026-11-16. EDM loss computed on the raw network output.** Since lambda(sigma) times c_out(sigma) squared is 1, an unweighted MSE on F against `(y - c_skip x) / c_out` equals the paper's weighted loss on D. It avoids dividing by tiny numbers at small sigma. `tests/test_edm.py` checks the two agree.
+**EDM loss on the raw network output.** lambda(sigma) times c_out(sigma) squared is exactly 1, so plain MSE on F against `(y - c_skip x) / c_out` is the same as the paper's weighted loss on D. It avoids dividing by tiny numbers at low noise. A test checks the two agree.
 
-**2026-11-16. Context noise is added at inference too.** At inference the context frames get real Gaussian noise at `inference_context_noise`, and the model is told that level. This keeps inference inputs matching what the model saw in training. Setting it to 0 turns it off.
+**Context noise at play time too.** When playing, the context frames get real noise at the inference level and the model is told that level. That keeps play-time inputs looking like training inputs. Setting it to 0 turns it off.
 
-**2026-11-16. AdaGroupNorm projections use the default init, not zeros.** With zero init the conditioning has no effect at step 0, and the "changing the action changes the output" check can't run on a fresh model.
+**AdaGroupNorm starts with normal weights, not zeros.** With zero init the action has no effect at step 0, so the "different actions give different frames" check can't run on a fresh model.
 
-**2026-11-16. Synthetic lane game for pipeline tests.** `lucid/data/synthetic.py` writes episodes in the raw format so validation, building, training, evaluation and serving can all be tested without Unity. It has its own registry (`configs/games_synthetic.yaml`), so it never mixes with real game ids. It is never used for reported results.
+**A synthetic lane game for testing.** `lucid/data/synthetic.py` writes fake episodes in the same raw format, so I can test validation, dataset building, training, evaluation and the server without opening Unity. It has its own game list (`configs/games_synthetic.yaml`), never mixes with my real games, and none of its numbers count as results.
 
-**2026-11-16. Upsampler without a previous frame.** At an episode start there is no previous high-res frame, so the upscaled low-res frame stands in for it. This avoids an extra "has previous frame" input.
+**Upsampler at the start of an episode.** There's no previous high-res frame yet, so the upscaled low-res frame stands in for it.
 
-**2026-11-16. Latent diffusion is only half built.** The autoencoder and its training script exist (SPEC 14.9 item 8). Training the world model on latents isn't wired in yet. That waits until pixel-space results show it's needed.
+**Latent diffusion is half built.** The autoencoder and its training script exist. Training the world model on latents waits until pixel-space results show I need it.
 
-**2026-11-16. Null-action bracket for controllability.** SPEC 17.4 compares against a model trained with the action always null. That is a separate training run with `--set model.p_uncond_action=1.0`, so evaluate.py reports it as not measured until that run exists.
-
-**2026-11-16. `protect-raw-data` hook tightened.** The original pattern blocked any command containing "rm" inside a word (like "format") followed later by `data/`. It now only matches `rm`, `mv`, `shred` or `truncate` as whole commands.
+**Null-action comparison.** To show how much control the model learned, I'll compare against a copy trained with the action always hidden (`--set model.p_uncond_action=1.0`). Until that run exists, the report says "not measured".
