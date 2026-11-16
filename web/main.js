@@ -555,3 +555,6 @@ setupControls();
 setupTouch();
 showScreen("start");
 layout();
+
+// ?autostart skips the start screen, for a demo screen left running unattended.
+if (new URLSearchParams(location.search).has("autostart")) el.start.click();
