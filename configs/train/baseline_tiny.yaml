@@ -1,0 +1,3 @@
+base: tiny.yaml
+run_name: baseline_tiny_runner_v1
+model: { type: baseline }

@@ -1,0 +1,5 @@
+# Ablation (SPEC 14.3): identical to small.yaml except no context noise.
+base: small.yaml
+run_name: small_runner_v1_no_ctx_noise
+context_noise: { enabled: false }
+sampler: { inference_context_noise: 0.0 }

@@ -1,0 +1,4 @@
+base: small.yaml
+run_name: baseline_small_runner_v1
+model: { type: baseline, p_uncond_action: 0.0 }
+train: { max_steps: 50000 }

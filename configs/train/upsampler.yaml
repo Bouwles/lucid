@@ -1,0 +1,7 @@
+# Rung 4 (SPEC 16): 64 -> 256 upsampler. Needs a dataset built with full_resolution: [256, 256].
+base: ../model/upsampler.yaml
+run_name: upsampler_runner_v1
+data: { version: runner_v1, games: [runner], resolution: [256, 256], frame_skip: 4, num_workers: 4 }
+model: { num_games: 1 }
+train: { batch_size: 16, lr: 1.0e-4, warmup_steps: 1000, max_steps: 100000, ema_decay: 0.9995, val_every: 2000 }
+sampler: { type: euler, steps: 4 }

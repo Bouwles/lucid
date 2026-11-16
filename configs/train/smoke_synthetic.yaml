@@ -1,0 +1,6 @@
+# Pipeline smoke test on synthetic data (CPU friendly, a minute or two).
+base: tiny.yaml
+run_name: smoke_synthetic
+games_file: configs/games_synthetic.yaml
+data: { version: synthetic_v1, games: [synthetic], frame_skip: 1, num_workers: 0 }
+train: { batch_size: 16, warmup_steps: 20, max_steps: 200, val_every: 100, ckpt_every: 100, val_batches: 1, val_rollout_steps: 16, log_every: 20 }

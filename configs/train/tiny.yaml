@@ -1,0 +1,9 @@
+# End-to-end smoke test on the runner: should train in under 10 minutes.
+base: ../model/tiny.yaml
+run_name: tiny_runner_v1
+seed: 0
+data: { version: runner_v1, games: [runner], resolution: [64, 64], context_frames: 4, action_history: true, frame_skip: 4, num_workers: 2 }
+model: { num_games: 1, sigma_data: 0.5, p_uncond_action: 0.1 }
+context_noise: { enabled: true, p_clean: 0.2, max_sigma: 0.7 }
+train: { batch_size: 32, lr: 2.0e-4, warmup_steps: 100, max_steps: 3000, ema_decay: 0.999, val_every: 500, ckpt_every: 1000, val_batches: 2, val_rollout_steps: 32 }
+sampler: { type: euler, steps: 3, sigma_max: 80, inference_context_noise: 0.1 }

@@ -1,0 +1,8 @@
+# Demo model. Ask Paul before running: expected well over 2 hours.
+base: ../model/base.yaml
+run_name: base_runner_v1
+seed: 0
+data: { version: runner_v1, games: [runner], resolution: [64, 64], context_frames: 8, action_history: true, frame_skip: 4, num_workers: 8 }
+model: { num_games: 1, sigma_data: 0.5, p_uncond_action: 0.1 }
+train: { batch_size: 64, lr: 1.0e-4, warmup_steps: 2000, max_steps: 250000, ema_decay: 0.9999, val_every: 5000, ckpt_every: 10000 }
+sampler: { type: euler, steps: 3, inference_context_noise: 0.1 }

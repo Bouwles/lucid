@@ -1,0 +1,5 @@
+# Rung 2+: one model, several games (SPEC 15). Ask Paul before running.
+base: small.yaml
+run_name: multi_v1
+data: { version: multi_v1, games: [runner, platformer], mixture: equal_per_game }
+model: { num_games: 3 }

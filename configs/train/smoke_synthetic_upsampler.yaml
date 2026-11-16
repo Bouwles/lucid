@@ -1,0 +1,7 @@
+base: upsampler.yaml
+run_name: smoke_synthetic_upsampler
+games_file: configs/games_synthetic.yaml
+data: { version: synthetic_v1, games: [synthetic], resolution: [128, 128], frame_skip: 1, num_workers: 0 }
+model: { base_channels: 32, channel_mults: [1, 2, 2, 2] }
+train: { batch_size: 8, warmup_steps: 10, max_steps: 60, val_every: 60, ckpt_every: 60, val_batches: 1, log_every: 20 }
+sampler: { steps: 2 }
