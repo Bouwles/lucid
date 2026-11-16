@@ -1,0 +1,10 @@
+# Synthetic pipeline check: python scripts/make_fixture.py, then build this.
+version: synthetic_v1
+raw: ["data/raw/synthetic_*"]
+games_file: configs/games_synthetic.yaml
+games: [synthetic]
+frame_skip: 1               # the synthetic game already runs at 15 Hz
+resolution: [64, 64]
+full_resolution: [128, 128]
+splits: { val_fraction: 0.1, test_fraction: 0.1, human_holdout_fraction: 0.5, seed: 0 }
+workers: 4

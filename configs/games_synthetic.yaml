@@ -1,0 +1,7 @@
+# The procedural lane game in lucid/data/synthetic.py. Pipeline tests only, never real results.
+games:
+  synthetic:
+    id: 0
+    engine: python
+    actions: { left: left, right: right, jump: jump, slide: down }
+    look_scale: null

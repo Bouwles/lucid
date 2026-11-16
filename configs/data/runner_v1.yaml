@@ -1,0 +1,11 @@
+version: runner_v1
+raw: ["data/raw/runner_*"]
+games: [runner]
+frame_skip: 4               # record at 60 Hz logic, train at 15 Hz
+action_rule: first_non_none
+resolution: [64, 64]        # [W, H]
+full_resolution: [256, 256] # kept for the upsampler (rung 4)
+resample: lanczos
+max_identical_seconds: 3.0
+splits: { val_fraction: 0.05, test_fraction: 0.05, human_holdout_fraction: 0.5, seed: 0 }
+workers: 8

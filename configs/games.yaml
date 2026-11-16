@@ -1,0 +1,12 @@
+# One entry per game. ids are stable: never reuse or renumber.
+# actions maps each of the game's own controls to a unified button (docs/formats.md).
+games:
+  runner:
+    id: 0
+    engine: unity
+    actions: { left: left, right: right, jump: jump, slide: down }
+    look_scale: null        # 2D-style controls, no look vector
+  # platformer:
+  #   id: 1
+  # shooter3d:
+  #   id: 2
