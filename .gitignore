@@ -34,3 +34,7 @@ recorder/web/node_modules/
 
 # secrets
 .env
+
+# engine sidecar builds
+engine/.venv-build/
+engine/build/
