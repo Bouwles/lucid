@@ -1,0 +1,72 @@
+{
+  "games": [
+    {
+      "id": "test-track",
+      "name": "Test Track",
+      "genre": "Practice lane game",
+      "tagline": "The tiny game I use to check every part of LUCID works.",
+      "description": "Three lanes, falling blocks to jump over and bars to slide under. It's deliberately simple, a stand-in while the real games are built, and its dream was trained in about half an hour on my laptop. The dream keeps the look and stays stable, but it still mostly ignores the controls, which is the problem I'm working on next.",
+      "accent": "#22d3ee",
+      "status": "available",
+      "controls": [
+        {"keys": "Left / Right or A / D", "action": "Change lane"},
+        {"keys": "Space", "action": "Jump"},
+        {"keys": "Down or S", "action": "Slide"}
+      ],
+      "game": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
+      "dream": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
+      "media": {"cover": "test-track.png", "clip": "test-track.gif"}
+    },
+    {
+      "id": "drift-kit",
+      "name": "Drift Kit",
+      "genre": "Low-poly racer",
+      "tagline": "Toy cars, forgiving drifts, and a ghost of your best lap.",
+      "description": "A bright low-poly racer with arcade handling: time trials and a few AI rivals on short tracks. It will be the first real game in LUCID, and its smooth motion should make it the best-looking dream.",
+      "accent": "#ff6b35",
+      "status": "coming_soon",
+      "controls": [
+        {"keys": "Left / Right", "action": "Steer"},
+        {"keys": "Up / Down", "action": "Accelerate, brake and reverse"},
+        {"keys": "Z", "action": "Drift"}
+      ],
+      "game": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
+      "dream": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
+      "media": {"cover": null, "clip": null}
+    },
+    {
+      "id": "bramble",
+      "name": "Bramble",
+      "genre": "2D platformer",
+      "tagline": "A handful of short levels with tight, forgiving jumps.",
+      "description": "A hand-made 2D world with coins, simple enemies, moving platforms and a goal flag at the end of each level. Gravity, landings and falls are exactly the kind of physics LUCID has to learn.",
+      "accent": "#7bc950",
+      "status": "coming_soon",
+      "controls": [
+        {"keys": "Left / Right", "action": "Run"},
+        {"keys": "Space", "action": "Jump"},
+        {"keys": "Z", "action": "Dash"}
+      ],
+      "game": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
+      "dream": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
+      "media": {"cover": null, "clip": null}
+    },
+    {
+      "id": "outpost",
+      "name": "Outpost",
+      "genre": "3D arena shooter",
+      "tagline": "Waves of robots in a small low-poly sci-fi arena.",
+      "description": "First-person, a couple of weapons, health and ammo pickups. The free camera makes it by far the hardest game for LUCID to dream, so it comes last.",
+      "accent": "#f2c14e",
+      "status": "coming_soon",
+      "controls": [
+        {"keys": "WASD", "action": "Move"},
+        {"keys": "Mouse", "action": "Look"},
+        {"keys": "Z / X", "action": "Fire, reload"}
+      ],
+      "game": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
+      "dream": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
+      "media": {"cover": null, "clip": null}
+    }
+  ]
+}

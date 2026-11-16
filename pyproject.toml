@@ -25,7 +25,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "ruff>=0.5", "httpx>=0.27"]
+dev = ["pytest>=8.0", "ruff>=0.5", "httpx>=0.27", "onnx>=1.16", "onnxscript>=0.1", "onnxruntime>=1.18"]
 play = ["pygame>=2.5"]
 export = ["onnx>=1.16", "onnxscript>=0.1", "onnxruntime>=1.18"]
 
@@ -35,7 +35,7 @@ include = ["lucid*"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-extend-exclude = ["recorder", "web"]
+extend-exclude = ["recorder", "web", "app"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
@@ -43,8 +43,10 @@ ignore = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = [".", "engine"]
 markers = ["gpu: needs a GPU, skipped in CI"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["lucid"]
-known-local-folder = ["conftest", "test_engine"]
+known-local-folder = ["conftest", "test_engine", "engine_fixtures"]
+known-third-party = ["lucid_engine"]
