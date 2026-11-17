@@ -1,0 +1,8 @@
+# outpost dream. About an hour on an M-series Mac (run with --max-minutes 55).
+base: ../model/game.yaml
+run_name: outpost_v1
+seed: 0
+data: { version: outpost_v1, games: [outpost], resolution: [64, 64], context_frames: 4, action_history: true, frame_skip: 2, num_workers: 4 }
+context_noise: { enabled: true, p_clean: 0.2, max_sigma: 0.7 }
+train: { batch_size: 32, lr: 2.0e-4, warmup_steps: 500, max_steps: 40000, ema_decay: 0.999, val_every: 2500, ckpt_every: 2500, val_batches: 2, val_rollout_steps: 48, log_every: 250 }
+sampler: { type: euler, steps: 3, sigma_max: 80, inference_context_noise: 0.1 }

@@ -1,0 +1,12 @@
+# bramble: autopilot recordings from scripts/record_web_game.py (logic at 30 Hz, kept at 15 Hz).
+version: bramble_v1
+raw: ["data/raw/bramble_*"]
+games: [bramble]
+frame_skip: 2
+action_rule: first_non_none
+resolution: [64, 64]
+full_resolution: null
+resample: area
+max_identical_seconds: 10.0
+splits: { val_fraction: 0.05, test_fraction: 0.05, human_holdout_fraction: 0.5, seed: 0 }
+workers: 8

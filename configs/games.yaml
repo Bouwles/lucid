@@ -6,7 +6,18 @@ games:
     engine: unity
     actions: { left: left, right: right, jump: jump, slide: down }
     look_scale: null        # 2D-style controls, no look vector
-  # platformer:
-  #   id: 1
-  # shooter3d:
-  #   id: 2
+  drift-kit:
+    id: 1
+    engine: web
+    actions: { steer_left: left, steer_right: right, accelerate: up, brake: down, drift: action_a }
+    look_scale: null
+  bramble:
+    id: 2
+    engine: web
+    actions: { run_left: left, run_right: right, jump: jump, dash: action_a }
+    look_scale: null
+  outpost:
+    id: 3
+    engine: web
+    actions: { strafe_left: left, strafe_right: right, forward: up, back: down, jump: jump, fire: action_a, reload: action_b }
+    look_scale: [12, 12]    # mouse pixels per tick that map to look = 1

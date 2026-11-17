@@ -1,0 +1,13 @@
+# Dream models for the built-in games: per-source conditioning norm and action channels, so the
+# controls are loud enough to learn (see docs/decisions.md).
+model:
+  type: edm_unet
+  base_channels: 48
+  channel_mults: [1, 2, 3, 4]
+  res_blocks_per_level: 2
+  attention_resolutions: [8]
+  cond_dim: 256
+  num_games: 4
+  p_uncond_action: 0.1
+  cond_norm: true
+  action_channels: true
