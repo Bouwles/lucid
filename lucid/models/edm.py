@@ -69,6 +69,7 @@ class DiffusionWorldModel(nn.Module):
         context_noise_p_clean: float = 0.2,
         context_noise_max: float = 0.7,
         motion_weight: float = 0.0,
+        action_channels: bool = False,
     ):
         super().__init__()
         self.unet = unet
@@ -80,13 +81,32 @@ class DiffusionWorldModel(nn.Module):
         self.ctx_p_clean = context_noise_p_clean
         self.ctx_max = context_noise_max
         self.motion_weight = motion_weight
+        self.action_channels = action_channels
 
     # --------------------------------------------------------------- the denoiser
 
+    @staticmethod
+    def action_planes(buttons, look, drop_action, H: int, W: int) -> torch.Tensor:
+        """Actions as constant image channels: [B, A, H, W] with A = (history) * 10. Dropped actions are zeros."""
+        a = torch.cat([buttons.float(), look.float()], dim=-1).flatten(1)  # [B, A]
+        if drop_action is not None:
+            a = a * (~drop_action)[:, None].to(a.dtype)
+        return a[:, :, None, None].expand(-1, -1, H, W)
+
     def raw(self, x_in, c_noise, context, buttons, look, game, sigma_ctx, drop_action=None):
+        cond = context.flatten(1, 2)
+        if self.action_channels:
+            # A direct path for the controls into every convolution, alongside the embedding.
+            cond = torch.cat(
+                [
+                    cond,
+                    self.action_planes(buttons, look, drop_action, *x_in.shape[-2:]).to(cond.dtype),
+                ],
+                1,
+            )
         return self.unet(
             x_in,
-            context.flatten(1, 2),
+            cond,
             game,
             buttons,
             look,

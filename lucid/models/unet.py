@@ -70,6 +70,7 @@ class ConditionalUNet(nn.Module):
         scalar_names: tuple[str, ...] = (),
         dropout: float = 0.0,
         out_channels: int = 3,
+        cond_norm: bool = False,
     ):
         super().__init__()
         self.scalar_names = tuple(scalar_names)
@@ -82,6 +83,14 @@ class ConditionalUNet(nn.Module):
         )
         self.scalar_embed = nn.ModuleDict({n: ScalarEmbedding(cond_dim) for n in self.scalar_names})
         self.cond_mlp = nn.Sequential(nn.SiLU(), nn.Linear(cond_dim, cond_dim))
+        # Each conditioning source is normalised before they're summed. Without this the game
+        # embedding (std 1 per dimension at init) is about ten times larger than the action
+        # embedding, and the model learns to ignore the controls.
+        self.cond_norm = cond_norm
+        if cond_norm:
+            self.norms = nn.ModuleDict(
+                {n: nn.LayerNorm(cond_dim) for n in ("game", "action", *self.scalar_names)}
+            )
 
         chans = [base_channels * m for m in channel_mults]
         self.conv_in = nn.Conv2d(3 + cond_channels, chans[0], 3, padding=1)
@@ -134,17 +143,20 @@ class ConditionalUNet(nn.Module):
         scalars: dict[str, torch.Tensor] | None = None,
         drop_action: torch.Tensor | None = None,
     ) -> torch.Tensor:
+        def norm(name: str, v: torch.Tensor) -> torch.Tensor:
+            return self.norms[name](v) if self.cond_norm else v
+
         if game.dtype in (torch.long, torch.int, torch.int32, torch.int64):
-            c = self.game_embed(game)
+            c = norm("game", self.game_embed(game))
         else:  # soft weights [B, num_games], used for blending games
-            c = game.to(self.game_embed.weight.dtype) @ self.game_embed.weight
+            c = norm("game", game.to(self.game_embed.weight.dtype) @ self.game_embed.weight)
         if self.action_embed is not None:
             if buttons is None or look is None:
                 raise ValueError("this UNet is action-conditioned: pass buttons and look")
-            c = c + self.action_embed(buttons, look, drop_action)
+            c = c + norm("action", self.action_embed(buttons, look, drop_action))
         scalars = scalars or {}
         for name in self.scalar_names:
-            c = c + self.scalar_embed[name](scalars[name])
+            c = c + norm(name, self.scalar_embed[name](scalars[name]))
         return self.cond_mlp(c)
 
     def forward(

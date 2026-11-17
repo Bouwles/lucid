@@ -55,7 +55,11 @@ class ModelConfig:
     p_std: float = 1.2
     p_uncond_action: float = 0.1
     lpips_weight: float = 0.0  # baseline only
-    motion_weight: float = 0.0  # extra loss weight on pixels that change (helps controls)
+    motion_weight: float = 0.0  # extra loss weight on pixels that change
+    cond_norm: bool = (
+        False  # normalise each conditioning source before summing (keeps actions audible)
+    )
+    action_channels: bool = False  # also feed actions as broadcast image channels
     # upsampler only
     low_resolution: list[int] = field(default_factory=lambda: [64, 64])
     use_prev_frame: bool = True

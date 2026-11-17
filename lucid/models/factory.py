@@ -28,10 +28,11 @@ def build_model(cfg: RunConfig, sigma_data: float | None = None) -> torch.nn.Mod
         cond_dim=m.cond_dim,
         num_games=m.num_games,
         dropout=m.dropout,
+        cond_norm=m.cond_norm,
     )
     if m.type == "edm_unet":
         unet = ConditionalUNet(
-            cond_channels=3 * k,
+            cond_channels=3 * k + (history * 10 if m.action_channels else 0),
             input_resolution=tuple(d.resolution),
             action_history=history,
             scalar_names=("noise", "ctx_noise"),
@@ -49,6 +50,7 @@ def build_model(cfg: RunConfig, sigma_data: float | None = None) -> torch.nn.Mod
             cn.p_clean,
             cn.max_sigma,
             m.motion_weight,
+            m.action_channels,
         )
     if m.type == "baseline":
         unet = ConditionalUNet(

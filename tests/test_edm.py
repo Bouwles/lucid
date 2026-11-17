@@ -126,3 +126,45 @@ def test_motion_weighted_loss_is_finite_and_differs():
     torch.manual_seed(5)
     weighted, _ = _model(motion_weight=8.0).training_loss(b)
     assert torch.isfinite(weighted) and abs(plain.item() - weighted.item()) > 1e-6
+
+
+def test_conditioning_norm_and_action_channels():
+    """With per-source norms and action channels, a fresh model's output clearly depends on the action."""
+    from lucid.models.factory import build_model
+    from lucid.utils.config import RunConfig
+
+    cfg = RunConfig()
+    cfg.data.resolution = [16, 16]
+    cfg.model.base_channels, cfg.model.channel_mults, cfg.model.attention_resolutions = (
+        16,
+        [1, 2],
+        [],
+    )
+    cfg.model.res_blocks_per_level, cfg.model.cond_dim = 1, 32
+    cfg.model.cond_norm = cfg.model.action_channels = True
+    torch.manual_seed(0)
+    m = build_model(cfg).eval()
+    b = _batch(2)
+    loss, _ = m.training_loss(b)
+    assert torch.isfinite(loss)
+    x, s, z = torch.randn(2, 3, 16, 16), torch.ones(2), torch.zeros(2)
+    left = b["buttons"].clone()
+    left[:, -1, 0] = 1
+    with torch.no_grad():
+        d_none = m.denoise(x, s, b["context"], b["buttons"], b["look"], b["game_id"], z)
+        d_left = m.denoise(x, s, b["context"], left, b["look"], b["game_id"], z)
+        d_drop = m.denoise(
+            x, s, b["context"], left, b["look"], b["game_id"], z, torch.ones(2, dtype=torch.bool)
+        )
+        d_drop2 = m.denoise(
+            x,
+            s,
+            b["context"],
+            b["buttons"],
+            b["look"],
+            b["game_id"],
+            z,
+            torch.ones(2, dtype=torch.bool),
+        )
+    assert (d_left - d_none).abs().mean() > 1e-3
+    assert torch.allclose(d_drop, d_drop2, atol=1e-6)  # a dropped action ignores what was pressed
