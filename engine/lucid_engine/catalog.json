@@ -9,64 +9,168 @@
       "accent": "#22d3ee",
       "status": "available",
       "controls": [
-        {"keys": "Left / Right or A / D", "action": "Change lane"},
-        {"keys": "Space", "action": "Jump"},
-        {"keys": "Down or S", "action": "Slide"}
+        {
+          "keys": "Left / Right or A / D",
+          "action": "Change lane"
+        },
+        {
+          "keys": "Space",
+          "action": "Jump"
+        },
+        {
+          "keys": "Down or S",
+          "action": "Slide"
+        }
       ],
-      "game": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
-      "dream": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
-      "media": {"cover": "test-track.png", "clip": "test-track.gif"}
+      "game": {
+        "downloadable": false,
+        "size_mb": null,
+        "url": null,
+        "sha256": null,
+        "builtin": false
+      },
+      "dream": {
+        "downloadable": false,
+        "size_mb": null,
+        "url": null,
+        "sha256": null
+      },
+      "media": {
+        "cover": "test-track.png",
+        "clip": "test-track.gif"
+      }
     },
     {
       "id": "drift-kit",
       "name": "Drift Kit",
       "genre": "Low-poly racer",
       "tagline": "Toy cars, forgiving drifts, and a ghost of your best lap.",
-      "description": "A bright low-poly racer with arcade handling: time trials and a few AI rivals on short tracks. It will be the first real game in LUCID, and its smooth motion should make it the best-looking dream.",
+      "description": "A bright low-poly racer with arcade handling. Two-lap time trials on one track, with a ghost of your best lap and a few AI rivals. Grass slows you down; trees and tents don't move.",
       "accent": "#ff6b35",
-      "status": "coming_soon",
+      "status": "available",
       "controls": [
-        {"keys": "Left / Right", "action": "Steer"},
-        {"keys": "Up / Down", "action": "Accelerate, brake and reverse"},
-        {"keys": "Z", "action": "Drift"}
+        {
+          "keys": "Left / Right",
+          "action": "Steer"
+        },
+        {
+          "keys": "Up",
+          "action": "Accelerate"
+        },
+        {
+          "keys": "Down",
+          "action": "Brake and reverse"
+        },
+        {
+          "keys": "Z",
+          "action": "Handbrake drift"
+        }
       ],
-      "game": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
-      "dream": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
-      "media": {"cover": null, "clip": null}
+      "game": {
+        "downloadable": false,
+        "size_mb": null,
+        "url": null,
+        "sha256": null,
+        "builtin": true
+      },
+      "dream": {
+        "downloadable": false,
+        "size_mb": null,
+        "url": null,
+        "sha256": null
+      },
+      "media": {
+        "cover": null,
+        "clip": null
+      }
     },
     {
       "id": "bramble",
       "name": "Bramble",
       "genre": "2D platformer",
-      "tagline": "A handful of short levels with tight, forgiving jumps.",
-      "description": "A hand-made 2D world with coins, simple enemies, moving platforms and a goal flag at the end of each level. Gravity, landings and falls are exactly the kind of physics LUCID has to learn.",
+      "tagline": "Five short levels with tight, forgiving jumps.",
+      "description": "A side-scrolling platformer with coyote time, jump buffering and a dash. Five hand-made levels with coins, stompable burrs, moving platforms and a flag at the end of each. It plays in 2D, drawn with 3D models.",
       "accent": "#7bc950",
-      "status": "coming_soon",
+      "status": "available",
       "controls": [
-        {"keys": "Left / Right", "action": "Run"},
-        {"keys": "Space", "action": "Jump"},
-        {"keys": "Z", "action": "Dash"}
+        {
+          "keys": "Left / Right or A / D",
+          "action": "Run"
+        },
+        {
+          "keys": "Space",
+          "action": "Jump (hold for higher)"
+        },
+        {
+          "keys": "Z",
+          "action": "Dash"
+        }
       ],
-      "game": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
-      "dream": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
-      "media": {"cover": null, "clip": null}
+      "game": {
+        "downloadable": false,
+        "size_mb": null,
+        "url": null,
+        "sha256": null,
+        "builtin": true
+      },
+      "dream": {
+        "downloadable": false,
+        "size_mb": null,
+        "url": null,
+        "sha256": null
+      },
+      "media": {
+        "cover": null,
+        "clip": null
+      }
     },
     {
       "id": "outpost",
       "name": "Outpost",
       "genre": "3D arena shooter",
       "tagline": "Waves of robots in a small low-poly sci-fi arena.",
-      "description": "First-person, a couple of weapons, health and ammo pickups. The free camera makes it by far the hardest game for LUCID to dream, so it comes last.",
+      "description": "First person on a floating outpost. Flying robots come in waves and fire slow shots you can dodge. Grab health and ammo, keep moving, and don't fall off the edge.",
       "accent": "#f2c14e",
-      "status": "coming_soon",
+      "status": "available",
       "controls": [
-        {"keys": "WASD", "action": "Move"},
-        {"keys": "Mouse", "action": "Look"},
-        {"keys": "Z / X", "action": "Fire, reload"}
+        {
+          "keys": "WASD / arrows",
+          "action": "Move"
+        },
+        {
+          "keys": "Mouse",
+          "action": "Look (click the game first)"
+        },
+        {
+          "keys": "Click or Z",
+          "action": "Fire"
+        },
+        {
+          "keys": "X",
+          "action": "Reload"
+        },
+        {
+          "keys": "Space",
+          "action": "Jump"
+        }
       ],
-      "game": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
-      "dream": {"downloadable": false, "size_mb": null, "url": null, "sha256": null},
-      "media": {"cover": null, "clip": null}
+      "game": {
+        "downloadable": false,
+        "size_mb": null,
+        "url": null,
+        "sha256": null,
+        "builtin": true
+      },
+      "dream": {
+        "downloadable": false,
+        "size_mb": null,
+        "url": null,
+        "sha256": null
+      },
+      "media": {
+        "cover": null,
+        "clip": null
+      }
     }
   ]
 }

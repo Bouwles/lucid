@@ -43,10 +43,11 @@ def test_token_is_required(client):
 def test_catalogue_and_library(client):
     games = {g["id"]: g for g in client.get("/games").json()}
     assert games["test-track"]["dream"]["installed"] and games["test-track"]["dream"]["bundled"]
-    assert (
-        games["drift-kit"]["status"] == "coming_soon"
-        and not games["drift-kit"]["dream"]["installed"]
-    )
+    # The built-in games ship inside the app, so they always count as installed.
+    for g in ("drift-kit", "bramble", "outpost"):
+        assert games[g]["status"] == "available"
+        assert games[g]["game"]["builtin"] and games[g]["game"]["installed"]
+    assert not games["test-track"]["game"]["builtin"]
     lib = client.get("/library").json()
     assert lib["models"][0]["bundled"] and lib["free_bytes"] > 0
     assert client.delete("/library/models/test-track").status_code == 409

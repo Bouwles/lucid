@@ -13,6 +13,7 @@
   import Home from "./screens/Home.svelte";
   import GamePage from "./screens/GamePage.svelte";
   import DreamPlayer from "./screens/DreamPlayer.svelte";
+  import GamePlayer from "./screens/GamePlayer.svelte";
   import Teach from "./screens/Teach.svelte";
   import Library from "./screens/Library.svelte";
   import Settings from "./screens/Settings.svelte";
@@ -26,7 +27,7 @@
   // Only show the "starting" screen if the engine takes a moment, to avoid a flash.
   let showStarting = $state(false);
 
-  const fullWindow = $derived(router.route.name === "dream" || router.route.name === "intro");
+  const fullWindow = $derived(router.route.name === "dream" || router.route.name === "play" || router.route.name === "intro");
 
   function errorText(e: unknown): string {
     return e instanceof Error ? e.message : String(e);
@@ -100,6 +101,8 @@
             <GamePage id={router.route.id} />
           {:else if router.route.name === "dream"}
             <DreamPlayer id={router.route.id} />
+          {:else if router.route.name === "play"}
+            <GamePlayer id={router.route.id} />
           {:else if router.route.name === "teach"}
             <Teach />
           {:else if router.route.name === "library"}

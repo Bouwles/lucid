@@ -183,7 +183,10 @@
             </div>
 
             <div class="action">
-              {#if game.game.installed}
+              {#if game.game.builtin}
+                <a class="btn big" href={href(`/play/${game.id}`)}>Play the real game</a>
+                <p class="note">The actual game, running right here in the app.</p>
+              {:else if game.game.installed}
                 <button class="btn big" onclick={play}>Play</button>
               {:else if game.game.downloadable}
                 <button class="btn big" onclick={downloadGame} disabled={!!job}>

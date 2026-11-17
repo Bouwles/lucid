@@ -1,10 +1,11 @@
-// Hash routing: #/, #/intro, #/game/<id>, #/dream/<id>, #/teach, #/library, #/settings.
+// Hash routing: #/, #/intro, #/game/<id>, #/play/<id>, #/dream/<id>, #/teach, #/library, #/settings.
 
 export type Route =
   | { name: "home" }
   | { name: "intro" }
   | { name: "game"; id: string }
   | { name: "dream"; id: string }
+  | { name: "play"; id: string }
   | { name: "teach" }
   | { name: "library" }
   | { name: "settings" };
@@ -18,6 +19,8 @@ function parse(hash: string): Route {
       return parts[1] ? { name: "game", id: parts[1] } : { name: "home" };
     case "dream":
       return parts[1] ? { name: "dream", id: parts[1] } : { name: "home" };
+    case "play":
+      return parts[1] ? { name: "play", id: parts[1] } : { name: "home" };
     case "teach":
       return { name: "teach" };
     case "library":

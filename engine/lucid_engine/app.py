@@ -68,7 +68,12 @@ def create_app(state: EngineState, token: str) -> FastAPI:
 
     # Added after the token check so it wraps it: preflight and 401s still carry CORS headers.
     app.add_middleware(
-        CORSMiddleware, allow_origins=APP_ORIGINS, allow_methods=["*"], allow_headers=["*"]
+        CORSMiddleware,
+        allow_origins=APP_ORIGINS,
+        # Any local dev server may call in; the per-launch token is what actually protects the API.
+        allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     @app.get("/health")

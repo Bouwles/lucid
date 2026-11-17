@@ -74,8 +74,9 @@ class EngineState:
                 )
             },
             "game": {
+                "builtin": bool(g["game"].get("builtin")),
                 "downloadable": bool(g["game"]["url"]),
-                "installed": game_dir.exists(),
+                "installed": bool(g["game"].get("builtin")) or game_dir.exists(),
                 "size_mb": g["game"]["size_mb"],
             },
             "dream": {

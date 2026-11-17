@@ -34,7 +34,8 @@ export interface Game {
   accent: string | null;
   status: "available" | "coming_soon";
   controls: Control[];
-  game: { downloadable: boolean; installed: boolean; size_mb: number | null; path?: string | null };
+  /** builtin: the game ships inside the app and plays in its own screen (#/play/<id>). */
+  game: { builtin: boolean; downloadable: boolean; installed: boolean; size_mb: number | null; path?: string | null };
   dream: {
     installed: boolean;
     bundled: boolean;
