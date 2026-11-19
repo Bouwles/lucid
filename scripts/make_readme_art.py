@@ -93,7 +93,7 @@ def banner(trajectory: list[np.ndarray], sigmas: list[float]) -> str:
         background(W, H),
         f'<text x="{x0 - 6}" y="176" font-family="{SANS}" font-size="128" font-weight="800" letter-spacing="20" fill="url(#brand)">LUCID</text>',
         f'<text x="{x0}" y="226" font-family="{SANS}" font-size="27" fill="{TEXT}">A neural game engine that learns to dream the games I make.</text>',
-        f'<text x="{x0}" y="262" font-family="{MONO}" font-size="15" fill="{MUTED}" letter-spacing="1">DIFFUSION WORLD MODEL  /  PYTORCH  /  UNITY RECORDER  /  PLAYABLE IN THE BROWSER</text>',
+        f'<text x="{x0}" y="262" font-family="{MONO}" font-size="15" fill="{MUTED}" letter-spacing="1">DIFFUSION WORLD MODEL  /  PYTORCH  /  DESKTOP APP  /  THREE BUILT-IN GAMES</text>',
     ]
     for i, (fr, s) in enumerate(zip(trajectory, sigmas, strict=True)):
         x = x0 + i * (size + gap)
@@ -145,7 +145,7 @@ def how_it_works(
     p.append(
         f'<text x="64" y="{ky + 76}" font-family="{MONO}" font-size="14" fill="{MUTED}" letter-spacing="1">WHICH GAME</text>'
         f'<rect x="190" y="{ky + 56}" width="92" height="30" rx="15" fill="none" stroke="{VIOLET}"/>'
-        f'<text x="236" y="{ky + 76}" text-anchor="middle" font-family="{MONO}" font-size="13" fill="{VIOLET}">runner</text>'
+        f'<text x="236" y="{ky + 76}" text-anchor="middle" font-family="{MONO}" font-size="13" fill="{VIOLET}">drift kit</text>'
     )
     # arrows into the denoiser
     bx, by, bw, bh = 500, 110, 330, 230
