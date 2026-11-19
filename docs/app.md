@@ -13,7 +13,7 @@ app/
   src-tauri/           Rust shell
     src/lib.rs         starts and stops the engine, launches games, smoke test
     binaries/          lucid-engine-<target triple> (the packaged engine, not committed)
-    resources/models/  dream packs bundled with the app (test-track)
+    resources/models/  dream packs bundled with the app (fetched at build time; packs.json lists them)
   scripts/make_icon.py draws the app icon
 ```
 
@@ -55,10 +55,11 @@ Two pieces aren't in git because they're large, so make them first:
 # the packaged engine (a clean build environment, no PyTorch)
 .venv/bin/python engine/build_sidecar.py
 
-# the bundled test-track dream pack, from a trained checkpoint
-.venv/bin/python scripts/export_dream_pack.py --checkpoint runs/<run>/best.pt \
-    --id test-track --game synthetic --out app/src-tauri/resources/models
+# the three dream packs, downloaded from GitHub Releases and checked against packs.json
+.venv/bin/python scripts/fetch_dream_pack.py --list app/src-tauri/resources/models/packs.json
 ```
+
+To ship a newly trained dream instead, export it with `scripts/export_dream_pack.py --checkpoint runs/<run>/latest.pt --id <game> --out app/src-tauri/resources/models --cfg-scale 2`, then publish the zip to a release and update `packs.json`.
 
 Then:
 

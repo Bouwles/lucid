@@ -51,7 +51,7 @@ A dream model ships as a folder:
 `dream.json`:
 
 ```json
-{"format": 1, "id": "test-track", "game": "test-track", "game_id": 0, "num_games": 1,
+{"format": 1, "id": "drift-kit", "game": "drift-kit", "game_id": 1, "num_games": 4,
  "resolution": [64, 64], "context_frames": 4, "action_history": true,
  "sigma_data": 0.5, "sampler": {"steps": 3, "sigma_min": 0.002, "sigma_max": 80, "rho": 7, "context_noise": 0.1},
  "quality": "fast", "trained_from": "<run name>", "dataset_version": "...", "created_utc": "..."}
@@ -100,7 +100,7 @@ All responses are JSON unless noted.
  "controls": [{"keys": "Arrows / WASD", "action": "Steer, accelerate, brake"}],
  "game": {"downloadable": false, "installed": false, "size_mb": null},
  "dream": {"installed": true, "bundled": true, "size_mb": 6.1, "quality": ["fast"], "downloadable": false},
- "media": {"cover": "/media/test-track.png" or null, "clip": "/media/test-track.gif" or null}}
+ "media": {"cover": "/media/drift-kit.jpg" or null, "clip": "/media/drift-kit-dream.gif" or null}}
 ```
 
 ### Jobs
@@ -118,7 +118,7 @@ Job state is written to `jobs/<id>.json` on every change. After a restart, jobs 
 
 `ws://127.0.0.1:<port>/dream?token=<token>` speaks the same protocol as the v1 browser demo (see [formats.md](formats.md#websocket-protocol-browser-demo)), with these differences:
 
-- `reset`, `set_game` and `blend` use catalogue ids (`"test-track"`, `"drift-kit"`).
+- `reset`, `set_game` and `blend` use catalogue ids (`"drift-kit"`, `"bramble"`, `"outpost"`).
 - `hello` lists only games whose dream is installed.
 - The server sends a frame each time it receives an `act` (or at most `target_fps` frames a second if the client sends `{"t": "stream", "fps": 15}`). The default is streaming at 15 FPS.
 - `{"t": "pause"}` and `{"t": "resume"}` stop and restart frame generation (for example while the window is hidden).

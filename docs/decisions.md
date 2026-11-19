@@ -33,3 +33,17 @@ Choices I made along the way, with the reason for each.
 **The test track ships inside the app.** Its dream pack (12 MB) is bundled, so the app can play a dream with no download, and smoke tests have a model to run. Real game dreams will be downloads from GitHub Releases, checked against a SHA-256 in the catalogue.
 
 **Downloads only from LUCID's own releases.** The engine refuses any download URL that isn't under the LUCID GitHub Releases, and rejects any zip with paths that would escape its folder.
+
+**The built-in games are web games, not Unity builds.** The app spec says Unity, but Unity isn't installed here. Drift Kit, Bramble and Outpost are written in TypeScript with Three.js and run inside the app, so they need no separate download. They follow the same raw recording format (`docs/formats.md`), so everything after recording is unchanged. Art and sound are Kenney's CC0 starter kits (`games/CREDITS.md`).
+
+**Bramble is 2D gameplay drawn with 3D models.** The CC0 platformer kit is 3D, so the game moves only along x and y with a side-on camera and parallax backdrops.
+
+**Why the first dreams ignored the controls.** The conditioning vector is a sum of embeddings. At initialisation the game-id embedding had a size of about 11.7, the action embedding about 1, and the difference between "left" and "right" about 0.12. In the trained test-track model, switching left to right changed the output by about 0.0001, while a fresh noise draw changed it by 0.01 to 0.07. The fix: normalise each source before summing (`cond_norm`) and also feed the actions in as image channels (`action_channels`). Weighting the loss toward moving pixels didn't help and is off.
+
+**Dreams use guidance 2.0 with 2 sampling steps.** On Bramble, guidance took "held left moves left" from 33% to 59% (the inverse dynamics model reads 93% on real footage, so that is roughly the ceiling). Guidance doubles the work per step, so the packs use 2 steps instead of 3 to keep about 14 FPS on this Mac's CPU. Core ML failed on this model in ONNX Runtime, so dreams run on the CPU.
+
+**Training budget.** Each game dream gets about 30 minutes on the M5 (single run, well under the 2-hour limit), so these are first versions. Longer training is the obvious next step.
+
+**The three dreams ship inside the app.** The spec has dreams download on first use. The packs are about 50 MB each, which is fine for a game app, and bundling means everything works offline straight after installing. The build fetches them from GitHub Releases with checksums (`app/src-tauri/resources/models/packs.json`).
+
+**The test track is retired.** It was only a pipeline check and its dream didn't respond to keys, so it's gone from the app. Its files are kept outside the repo.
