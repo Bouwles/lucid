@@ -38,6 +38,9 @@ def main() -> None:
     p.add_argument(
         "--steps", type=int, default=None, help="default sampler steps (from the config if unset)"
     )
+    p.add_argument(
+        "--cfg-scale", type=float, default=1.0, help="classifier-free guidance strength (1 = off)"
+    )
     p.add_argument("--zip", action="store_true")
     args = p.parse_args()
     seed_everything(0)
@@ -87,6 +90,7 @@ def main() -> None:
             "sigma_max": s.sigma_max,
             "rho": s.rho,
             "context_noise": s.inference_context_noise,
+            "cfg_scale": args.cfg_scale,
         },
         "quality": "fast",
         "trained_from": Path(args.checkpoint).resolve().parent.name,
