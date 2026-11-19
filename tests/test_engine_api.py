@@ -42,16 +42,17 @@ def test_token_is_required(client):
 
 def test_catalogue_and_library(client):
     games = {g["id"]: g for g in client.get("/games").json()}
-    assert games["test-track"]["dream"]["installed"] and games["test-track"]["dream"]["bundled"]
+    assert games["bramble"]["dream"]["installed"] and games["bramble"]["dream"]["bundled"]
+    assert not games["drift-kit"]["dream"]["installed"]
+    assert "test-track" not in games
     # The built-in games ship inside the app, so they always count as installed.
     for g in ("drift-kit", "bramble", "outpost"):
         assert games[g]["status"] == "available"
         assert games[g]["game"]["builtin"] and games[g]["game"]["installed"]
-    assert not games["test-track"]["game"]["builtin"]
     lib = client.get("/library").json()
     assert lib["models"][0]["bundled"] and lib["free_bytes"] > 0
-    assert client.delete("/library/models/test-track").status_code == 409
-    assert client.get("/media/test-track.png").status_code == 200
+    assert client.delete("/library/models/bramble").status_code == 409
+    assert client.get("/media/bramble.jpg").status_code == 200
     assert client.get("/media/..%2Fcatalog.json").status_code == 404
 
 
@@ -79,9 +80,9 @@ def test_dream_websocket(client):
             ws.receive_text()
     with client.websocket_connect(f"/dream?token={TOKEN}") as ws:
         hello = json.loads(ws.receive_text())
-        assert hello["t"] == "hello" and hello["games"][0]["name"] == "test-track"
+        assert hello["t"] == "hello" and hello["games"][0]["name"] == "bramble"
         ws.send_text(json.dumps({"t": "stream", "fps": 60}))
-        ws.send_text(json.dumps({"t": "reset", "game": "test-track"}))
+        ws.send_text(json.dumps({"t": "reset", "game": "bramble"}))
         frames = 0
         while frames < 3:
             msg = ws.receive()

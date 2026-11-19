@@ -1,46 +1,6 @@
 {
   "games": [
     {
-      "id": "test-track",
-      "name": "Test Track",
-      "genre": "Practice lane game",
-      "tagline": "The tiny game I use to check every part of LUCID works.",
-      "description": "Three lanes, falling blocks to jump over and bars to slide under. It's deliberately simple, a stand-in while the real games are built, and its dream was trained in about half an hour on my laptop. The dream keeps the look and stays stable, but it still mostly ignores the controls, which is the problem I'm working on next.",
-      "accent": "#22d3ee",
-      "status": "available",
-      "controls": [
-        {
-          "keys": "Left / Right or A / D",
-          "action": "Change lane"
-        },
-        {
-          "keys": "Space",
-          "action": "Jump"
-        },
-        {
-          "keys": "Down or S",
-          "action": "Slide"
-        }
-      ],
-      "game": {
-        "downloadable": false,
-        "size_mb": null,
-        "url": null,
-        "sha256": null,
-        "builtin": false
-      },
-      "dream": {
-        "downloadable": false,
-        "size_mb": null,
-        "url": null,
-        "sha256": null
-      },
-      "media": {
-        "cover": "test-track.png",
-        "clip": "test-track.gif"
-      }
-    },
-    {
       "id": "drift-kit",
       "name": "Drift Kit",
       "genre": "Low-poly racer",
@@ -80,8 +40,8 @@
         "sha256": null
       },
       "media": {
-        "cover": null,
-        "clip": null
+        "cover": "drift-kit.jpg",
+        "clip": "drift-kit-dream.gif"
       }
     },
     {
@@ -120,8 +80,8 @@
         "sha256": null
       },
       "media": {
-        "cover": null,
-        "clip": null
+        "cover": "bramble.jpg",
+        "clip": "bramble-dream.gif"
       }
     },
     {
@@ -168,8 +128,8 @@
         "sha256": null
       },
       "media": {
-        "cover": null,
-        "clip": null
+        "cover": "outpost.jpg",
+        "clip": "outpost-dream.gif"
       }
     }
   ]

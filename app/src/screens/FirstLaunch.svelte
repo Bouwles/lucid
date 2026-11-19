@@ -19,7 +19,7 @@
       .catch((e) => (hwError = e instanceof Error ? e.message : String(e)));
     engine
       .games()
-      .then((list) => (clipGame = list.find((g) => g.id === "test-track" && (g.media.clip || g.media.cover)) ?? null))
+      .then((list) => (clipGame = list.find((g) => g.id === "drift-kit" && (g.media.clip || g.media.cover)) ?? list.find((g) => g.media.clip || g.media.cover) ?? null))
       .catch(() => {});
   });
 
@@ -78,7 +78,7 @@
   {#if clipGame}
     <figure class="clip">
       <div class="clip-media"><GameMedia game={clipGame} autoplay fit="contain" /></div>
-      <figcaption>The test track, a tiny practice game for checking the system.</figcaption>
+      <figcaption>{clipGame.name}, one of the three games built into LUCID.</figcaption>
     </figure>
   {/if}
 </div>

@@ -34,7 +34,8 @@
     KeyZ: "action_a",
     KeyX: "action_b",
   };
-  const SAMPLER_STEPS = [1, 2, 3, 4, 6, 8];
+  // Fewer than 3 steps turns these dreams into noise, so it isn't offered.
+  const SAMPLER_STEPS = [3, 4, 6];
   const SEND_INTERVAL_MS = 1000 / 20;
   const CHANNEL_DREAM = 0;
   const OVERLAY_MS = 3000;
@@ -464,8 +465,9 @@
           <div id="explain" class="explain" transition:fade={{ duration: dur(140) }}>
             <p>
               Nothing here is running a game engine. A neural network is looking at the last few frames and the
-              keys you're pressing, and imagining the next frame, about 15 times a second.{#if id === "test-track"}{" "}This test track is a tiny practice game I use to check the whole system works; the real games are
-                coming.{/if}
+              keys you're pressing, and imagining the next frame, about 15 times a second. It learned this game by watching an autopilot play it. It follows the
+              running and steering keys better than jumps and special moves, and things it rarely saw can melt or
+              pop in and out.
             </p>
             <button
               class="btn small"

@@ -18,7 +18,7 @@
   const clipIsVideo = $derived(isVideo(clip));
   const live = $derived((playing || autoplay) && !reducedMotion());
 
-  // Small sources (the 64 px test track) get nearest-neighbour scaling so every
+  // Small sources (64 px dream clips) get nearest-neighbour scaling so every
   // model pixel stays a crisp block. Large screenshots scale smoothly.
   let small = $state(true);
   let video = $state<HTMLVideoElement>();

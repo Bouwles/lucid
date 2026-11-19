@@ -19,7 +19,7 @@
 
   const key = (i: LibraryItem) => `${i.kind}/${i.id}`;
 
-  // Show catalogue names ("Test Track dream") instead of raw ids where we can.
+  // Show catalogue names ("Drift Kit dream") instead of raw ids where we can.
   let names = $state<Record<string, string>>({});
 
   function label(item: LibraryItem): string {

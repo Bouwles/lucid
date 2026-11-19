@@ -19,3 +19,6 @@ src-tauri/binaries/*
 
 # dream pack weights (large; bundled at build time, not committed)
 src-tauri/resources/models/**/*.onnx.data
+
+# dream packs are fetched at build time from GitHub Releases (packs.json lists them)
+src-tauri/resources/models/*/

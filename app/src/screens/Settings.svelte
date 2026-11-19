@@ -7,7 +7,7 @@
   import { appVersion } from "../lib/shell";
   import type { Hardware, Library } from "../lib/types";
 
-  const STEP_CHOICES = [1, 2, 3, 4, 6, 8];
+  const STEP_CHOICES = [3, 4, 6];
 
   let hw = $state<Hardware | null>(null);
   let lib = $state<Library | null>(null);

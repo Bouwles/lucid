@@ -19,7 +19,7 @@ def tiny_cfg() -> RunConfig:
     return cfg
 
 
-def make_pack(root: Path, pack_id: str = "test-track"):
+def make_pack(root: Path, pack_id: str = "bramble"):
     import torch
 
     torch.manual_seed(0)
