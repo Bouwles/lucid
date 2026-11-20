@@ -50,11 +50,11 @@ def main() -> None:
     print("training the reward model on real frames")
     reward, scale = train_reward(train_eps, device)
 
-    test_eps, _ = load_episodes(args.root, args.dataset, "test", [args.game])
+    val_eps, _ = load_episodes(args.root, args.dataset, "val", [args.game])
     k = world.k
     rng = np.random.default_rng(0)
     frames, buttons, look = [], [], []
-    for e in test_eps + train_eps[:20]:
+    for e in val_eps + train_eps[:20]:  # never the test split
         for t in range(0, len(e) - k, 25):
             if bool(e.labels["alive"][t : t + k].all()):
                 frames.append(np.asarray(e.frames[t : t + k]))
