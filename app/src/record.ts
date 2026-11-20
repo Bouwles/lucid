@@ -16,7 +16,13 @@ class RandomHolds {
   private held: Action = { buttons: 0, look: [0, 0] };
   private bits: number[];
 
-  constructor(private rng: Rng, private share: number, mask: number, private look: boolean) {
+  constructor(
+    private rng: Rng,
+    private share: number,
+    mask: number,
+    private look: boolean,
+    private idle = 0.15,
+  ) {
     this.bits = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => 1 << i).filter((b) => mask & b);
   }
 
@@ -27,7 +33,7 @@ class RandomHolds {
       if (this.randomNow) {
         let b = 0;
         // usually one or two buttons, sometimes none (letting go is an action too)
-        const n = this.rng() < 0.15 ? 0 : this.rng() < 0.6 ? 1 : 2;
+        const n = this.rng() < this.idle ? 0 : this.rng() < 0.6 ? 1 : 2;
         for (let i = 0; i < n; i++) b |= this.bits[Math.floor(this.rng() * this.bits.length)];
         const lx = this.look && this.rng() < 0.6 ? (this.rng() * 2 - 1) * 0.6 : 0;
         const ly = this.look && this.rng() < 0.3 ? (this.rng() * 2 - 1) * 0.3 : 0;
@@ -54,6 +60,8 @@ const maxTicks = Number(q.get("maxTicks") ?? 4000);
 // still do well. Random holds make the keys carry information the frames don't.
 const randomShare = Number(q.get("random") ?? 0);
 const buttonMask = Number(q.get("mask") ?? 0xff); // buttons this game uses
+// Share of random holds with no key at all. Standing still is an action the dream has to learn too.
+const idleShare = Number(q.get("idle") ?? 0.15);
 const useLook = q.get("look") === "1";
 const BATCH = 64;
 const logEl = document.getElementById("log") as HTMLPreElement;
@@ -120,8 +128,8 @@ async function main() {
     const seed = seed0 + e;
     game.reset(seed);
     const pilot = game.createAutopilot(seed * 7919 + 13);
-    const mixer = new RandomHolds(mulberry32(seed * 104729 + 7), randomShare, buttonMask, useLook);
-    const settings = { ...pilot.describe(), random_share: randomShare, button_mask: buttonMask };
+    const mixer = new RandomHolds(mulberry32(seed * 104729 + 7), randomShare, buttonMask, useLook, idleShare);
+    const settings = { ...pilot.describe(), random_share: randomShare, idle_share: idleShare, button_mask: buttonMask };
     await post("/episode_start", JSON.stringify({ worker, episode: e, seed, action_source: { name: randomShare > 0 ? "autopilot+random" : "autopilot", settings } }), "application/json");
     let steps: StepRecord[] = [];
     let pixels: Uint8Array[] = [];

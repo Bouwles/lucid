@@ -199,6 +199,9 @@ def main() -> None:
     p.add_argument(
         "--random", type=float, default=0.0, help="share of time on random held inputs (0 to 1)"
     )
+    p.add_argument(
+        "--idle", type=float, default=0.15, help="share of random holds with no key pressed"
+    )
     p.add_argument("--out", default="data/raw")
     p.add_argument(
         "--human", action="store_true", help="not supported here; human sessions come from the app"
@@ -271,7 +274,7 @@ def main() -> None:
             url = (
                 f"http://localhost:1420/record.html?game={args.game}&collector=http://127.0.0.1:{cport}"
                 f"&token={token}&worker={w}&episodes={args.episodes}&seed={args.seed + w * 1_000_000}"
-                f"&size={args.size}&maxTicks={args.max_ticks}&random={args.random}&mask={MASKS[args.game]}&look={int(args.game == 'outpost')}"
+                f"&size={args.size}&maxTicks={args.max_ticks}&random={args.random}&idle={args.idle}&mask={MASKS[args.game]}&look={int(args.game == 'outpost')}"
             )
             asyncio.run(open_tab(cdp_port, url))
         t0 = time.time()
