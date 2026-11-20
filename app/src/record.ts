@@ -6,7 +6,39 @@
 // logic tick (frame, action, labels) to the collector, which writes the standard raw format.
 
 import { GAMES } from "@games/registry";
-import type { GameState } from "@games/shared/types";
+import { mulberry32, type Rng } from "@games/shared/rng";
+import type { Action, GameState } from "@games/shared/types";
+
+/** Alternates between the autopilot and random held inputs, in segments of 4 to 24 ticks. */
+class RandomHolds {
+  private left = 0;
+  private randomNow = false;
+  private held: Action = { buttons: 0, look: [0, 0] };
+  private bits: number[];
+
+  constructor(private rng: Rng, private share: number, mask: number, private look: boolean) {
+    this.bits = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => 1 << i).filter((b) => mask & b);
+  }
+
+  act(autopilot: () => Action): Action {
+    if (this.left <= 0) {
+      this.left = 4 + Math.floor(this.rng() * 21);
+      this.randomNow = this.rng() < this.share;
+      if (this.randomNow) {
+        let b = 0;
+        // usually one or two buttons, sometimes none (letting go is an action too)
+        const n = this.rng() < 0.15 ? 0 : this.rng() < 0.6 ? 1 : 2;
+        for (let i = 0; i < n; i++) b |= this.bits[Math.floor(this.rng() * this.bits.length)];
+        const lx = this.look && this.rng() < 0.6 ? (this.rng() * 2 - 1) * 0.6 : 0;
+        const ly = this.look && this.rng() < 0.3 ? (this.rng() * 2 - 1) * 0.3 : 0;
+        this.held = { buttons: b, look: [lx, ly] };
+      }
+    }
+    this.left--;
+    const a = autopilot(); // always step the autopilot so its own plans stay consistent
+    return this.randomNow ? this.held : a;
+  }
+}
 
 const q = new URLSearchParams(location.search);
 const gameId = q.get("game") ?? "drift-kit";
@@ -17,6 +49,12 @@ const episodes = Number(q.get("episodes") ?? 10);
 const seed0 = Number(q.get("seed") ?? 1);
 const size = Number(q.get("size") ?? 128);
 const maxTicks = Number(q.get("maxTicks") ?? 4000);
+// Share of time spent on random held inputs instead of the autopilot. A competent autopilot's
+// keys are predictable from the picture, so a dream trained only on it can ignore the keys and
+// still do well. Random holds make the keys carry information the frames don't.
+const randomShare = Number(q.get("random") ?? 0);
+const buttonMask = Number(q.get("mask") ?? 0xff); // buttons this game uses
+const useLook = q.get("look") === "1";
 const BATCH = 64;
 const logEl = document.getElementById("log") as HTMLPreElement;
 const log = (s: string) => (logEl.textContent = s);
@@ -82,7 +120,9 @@ async function main() {
     const seed = seed0 + e;
     game.reset(seed);
     const pilot = game.createAutopilot(seed * 7919 + 13);
-    await post("/episode_start", JSON.stringify({ worker, episode: e, seed, action_source: { name: "autopilot", settings: pilot.describe() } }), "application/json");
+    const mixer = new RandomHolds(mulberry32(seed * 104729 + 7), randomShare, buttonMask, useLook);
+    const settings = { ...pilot.describe(), random_share: randomShare, button_mask: buttonMask };
+    await post("/episode_start", JSON.stringify({ worker, episode: e, seed, action_source: { name: randomShare > 0 ? "autopilot+random" : "autopilot", settings } }), "application/json");
     let steps: StepRecord[] = [];
     let pixels: Uint8Array[] = [];
     for (let t = 0; ; t++) {
@@ -96,7 +136,7 @@ async function main() {
         rgb[j + 2] = rgba[i + 2];
       }
       const state = stateJson(game.state());
-      const action = pilot.act(game);
+      const action = mixer.act(() => pilot.act(game));
       game.step(action);
       const end = game.isOver() || t === maxTicks - 1;
       steps.push({ step: t, time: t * dt, buttons: action.buttons & 0xff, look: action.look, state, episode_end: end });

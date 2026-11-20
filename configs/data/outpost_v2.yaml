@@ -1,0 +1,12 @@
+# outpost: autopilot recordings plus sessions with random held keys from scripts/record_web_game.py (logic at 30 Hz, kept at 15 Hz).
+version: outpost_v2
+raw: ["data/raw/outpost_*"]
+games: [outpost]
+frame_skip: 2
+action_rule: first_non_none
+resolution: [64, 64]
+full_resolution: [128, 128]   # kept for the upsampler
+resample: area
+max_identical_seconds: 10.0
+splits: { val_fraction: 0.05, test_fraction: 0.05, human_holdout_fraction: 0.5, seed: 0 }
+workers: 8

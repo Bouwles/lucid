@@ -34,6 +34,12 @@ from lucid.data.format import EpisodeMeta, SessionMeta, Step, frame_path, write_
 ROOT = Path(__file__).resolve().parents[1]
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 EPISODES_PER_WORKER_OFFSET = 100_000  # worker w writes episodes w*100000 + i
+# Buttons each game maps (configs/games.yaml): left 1, right 2, up 4, down 8, jump 16, a 32, b 64.
+MASKS = {
+    "drift-kit": 1 | 2 | 4 | 8 | 32,
+    "bramble": 1 | 2 | 16 | 32,
+    "outpost": 1 | 2 | 4 | 8 | 16 | 32 | 64,
+}
 
 
 class Collector:
@@ -190,6 +196,9 @@ def main() -> None:
     p.add_argument("--size", type=int, default=128, help="recording resolution (square)")
     p.add_argument("--seed", type=int, default=1, help="first seed; worker w uses seed + w*1e6")
     p.add_argument("--max-ticks", type=int, default=4000)
+    p.add_argument(
+        "--random", type=float, default=0.0, help="share of time on random held inputs (0 to 1)"
+    )
     p.add_argument("--out", default="data/raw")
     p.add_argument(
         "--human", action="store_true", help="not supported here; human sessions come from the app"
@@ -262,7 +271,7 @@ def main() -> None:
             url = (
                 f"http://localhost:1420/record.html?game={args.game}&collector=http://127.0.0.1:{cport}"
                 f"&token={token}&worker={w}&episodes={args.episodes}&seed={args.seed + w * 1_000_000}"
-                f"&size={args.size}&maxTicks={args.max_ticks}"
+                f"&size={args.size}&maxTicks={args.max_ticks}&random={args.random}&mask={MASKS[args.game]}&look={int(args.game == 'outpost')}"
             )
             asyncio.run(open_tab(cdp_port, url))
         t0 = time.time()

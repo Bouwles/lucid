@@ -1,0 +1,13 @@
+# All three built-in games in one dataset, for the multi-game dream and the upsampler:
+# autopilot play plus sessions with random held keys (so the keys carry information).
+version: games_v2
+raw: ["data/raw/drift-kit_*", "data/raw/bramble_*", "data/raw/outpost_*"]
+games: [drift-kit, bramble, outpost]
+frame_skip: 2
+action_rule: first_non_none
+resolution: [64, 64]
+full_resolution: [128, 128]   # upsampler targets
+resample: area
+max_identical_seconds: 10.0
+splits: { val_fraction: 0.04, test_fraction: 0.04, human_holdout_fraction: 0.5, seed: 0 }
+workers: 3
