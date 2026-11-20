@@ -102,6 +102,7 @@ def _loader(ds, cfg: RunConfig, device, seed: int) -> DataLoader:
 def train(
     cfg: RunConfig,
     resume: str | None = None,
+    init: str | None = None,
     max_minutes: float | None = None,
     log=print,
 ) -> Path:
@@ -129,6 +130,12 @@ def train(
     loader = _loader(train_ds, cfg, device, cfg.seed)
 
     model = build_model(cfg, manifest.get("sigma_data")).to(device)
+    if init:
+        # Start from another run's weights (its EMA, which is what generates best), with a fresh
+        # optimiser and schedule. Used to fine-tune a dream on new data.
+        ck = torch.load(init, map_location="cpu", weights_only=False)
+        model.load_state_dict(ck["ema"] if ck.get("ema") is not None else ck["model"])
+        log(f"initialised weights from {init}")
     ema = EMA(model, cfg.train.ema_decay)
     opt = torch.optim.AdamW(
         model.parameters(), lr=cfg.train.lr, weight_decay=cfg.train.weight_decay, betas=(0.9, 0.99)

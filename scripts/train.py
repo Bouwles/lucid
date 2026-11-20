@@ -11,10 +11,11 @@ def main() -> None:
     p.add_argument("--config", required=True)
     p.add_argument("--set", action="append", default=[], metavar="KEY=VALUE")
     p.add_argument("--resume", default=None, help="path to a latest.pt to resume from")
+    p.add_argument("--init", default=None, help="start a new run from another checkpoint's weights")
     p.add_argument("--max-minutes", type=float, default=None, help="stop cleanly after this long")
     args = p.parse_args()
     cfg = load_config(args.config, args.set)
-    train(cfg, resume=args.resume, max_minutes=args.max_minutes)
+    train(cfg, resume=args.resume, init=args.init, max_minutes=args.max_minutes)
 
 
 if __name__ == "__main__":
