@@ -52,8 +52,19 @@ class EngineState:
                 (self.bundled, True), (self.data / "models", False)
             )
 
+    @property
+    def sharp_path(self) -> Path | None:
+        """The upsampler pack for "Sharp" quality, if installed."""
+        for root in (self.data / "models", self.bundled):
+            if root and (Path(root) / "sharp" / "sharp.json").exists():
+                return Path(root) / "sharp"
+        return None
+
     def pack_for(self, game_id: str) -> DreamPack | None:
-        return next((p for p in self.packs.values() if p.game == game_id), None)
+        """The pack that dreams this game. A game's own pack wins over a multi-game pack."""
+        serving = [p for p in self.packs.values() if game_id in p.games]
+        serving.sort(key=lambda p: len(p.games))
+        return serving[0] if serving else None
 
     def game_entry(self, g: dict) -> dict:
         pack = self.pack_for(g["id"])

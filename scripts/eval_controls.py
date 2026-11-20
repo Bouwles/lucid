@@ -41,16 +41,27 @@ def main() -> None:
     p.add_argument("--cfg", type=float, nargs="*", default=[1.0])
     p.add_argument("--device", default="auto")
     p.add_argument("--idm-steps", type=int, default=3000)
+    p.add_argument("--game", default=None, help="for a multi-game model: evaluate this game only")
+    p.add_argument(
+        "--dataset", default=None, help="evaluate on this dataset version instead of the model's"
+    )
     args = p.parse_args()
     seed_everything(0)
     device = pick_device(args.device)
     model, cfg, extra = load_model(args.checkpoint, device)
     amp = autocast_dtype(device, cfg.train.precision)
     d, k = cfg.data, cfg.data.context_frames
+    if args.game:
+        d.games = [args.game]
+    if args.dataset:
+        d.version = args.dataset
     train_eps, _ = load_episodes(d.root, d.version, "train", d.games)
     test_eps, _ = load_episodes(d.root, d.version, "test", d.games) or (train_eps, None)
 
-    idm_path = Path(args.idm) if args.idm else Path(d.root) / d.version / f"idm_gap{args.gap}.pt"
+    tag = f"_{args.game}" if args.game else ""
+    idm_path = (
+        Path(args.idm) if args.idm else Path(d.root) / d.version / f"idm_gap{args.gap}{tag}.pt"
+    )
     if idm_path.exists():
         idm, gap, used, real_acc = load_idm(idm_path, device)
     else:
@@ -113,7 +124,7 @@ def main() -> None:
             {b_: round(v, 3) for b_, v in obeys.items() if not b_.endswith("_other_detected")},
         )
 
-    out = Path(args.checkpoint).resolve().parent / "controls.json"
+    out = Path(args.checkpoint).resolve().parent / f"controls{tag}.json"
     out.write_text(json.dumps(results, indent=1))
     print(f"wrote {out}")
 

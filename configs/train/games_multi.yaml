@@ -1,0 +1,8 @@
+# One dream for all three games (rung 2 of the app spec), fine-tuned from the Drift Kit dream.
+base: ../model/game.yaml
+run_name: games_multi_v2
+seed: 0
+data: { version: games_v2, games: [drift-kit, bramble, outpost], mixture: equal_per_game, resolution: [64, 64], context_frames: 4, action_history: true, frame_skip: 2, num_workers: 2 }
+context_noise: { enabled: true, p_clean: 0.2, max_sigma: 0.7 }
+train: { batch_size: 32, lr: 1.5e-4, warmup_steps: 300, max_steps: 40000, ema_decay: 0.999, val_every: 2000, ckpt_every: 2000, val_batches: 2, val_rollout_steps: 32, log_every: 250 }
+sampler: { type: euler, steps: 3, sigma_max: 80, inference_context_noise: 0.1, cfg_scale: 2.0 }
