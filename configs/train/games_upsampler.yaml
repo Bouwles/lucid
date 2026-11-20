@@ -1,0 +1,7 @@
+# 64 -> 128 upsampler for all three games ("sharp" mode, rung 4).
+base: ../model/upsampler.yaml
+run_name: games_upsampler_v2
+data: { version: games_v2, games: [drift-kit, bramble, outpost], resolution: [128, 128], frame_skip: 2, num_workers: 2 }
+model: { num_games: 4, base_channels: 32, channel_mults: [1, 2, 2, 4], low_resolution: [64, 64], cond_dim: 128 }
+train: { batch_size: 16, lr: 2.0e-4, warmup_steps: 300, max_steps: 40000, ema_decay: 0.999, val_every: 2000, ckpt_every: 2000, val_batches: 1, log_every: 250 }
+sampler: { type: euler, steps: 3 }

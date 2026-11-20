@@ -14,7 +14,7 @@ from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconn
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from lucid_engine import __version__
-from lucid_engine.dream import Dream
+from lucid_engine.dream import Dream, Sharpener
 from lucid_engine.state import EngineState
 from PIL import Image
 
@@ -183,8 +183,26 @@ def create_app(state: EngineState, token: str) -> FastAPI:
                 {
                     "t": "hello",
                     "games": [
-                        {"name": p.game, "id": int(p.meta.get("game_id", 0))} for p in installed
+                        {"name": g, "id": gid}
+                        for g, gid in sorted(
+                            {(g, gid) for p in installed for g, gid in p.games.items()}
+                        )
                     ],
+                    "blend_available": any(len(p.games) > 1 for p in installed),
+                    "autoplay_available": sorted(
+                        {g for p in installed for g in p.games if p.has_policy_for(g)}
+                    ),
+                    # games whose dream comes from a multi-game model: those can switch in place and blend
+                    "blend_games": sorted(
+                        {
+                            g
+                            for p in installed
+                            if len(p.games) > 1
+                            for g in p.games
+                            if state.pack_for(g) is p
+                        }
+                    ),
+                    "sharp_available": state.sharp_path is not None,
                     "resolution": installed[0].meta["resolution"] if installed else [64, 64],
                     "sampler_steps": int(installed[0].meta["sampler"]["steps"]) if installed else 3,
                     "side_by_side_available": False,
@@ -199,6 +217,8 @@ def create_app(state: EngineState, token: str) -> FastAPI:
             "fps": 15.0,
             "reset": None,
             "steps": state.settings().get("sampler_steps"),
+            "autoplay": False,
+            "sharp": False,
         }
 
         async def receive():
@@ -209,21 +229,46 @@ def create_app(state: EngineState, token: str) -> FastAPI:
                     s["buttons"] = int(msg.get("buttons", 0)) & 0xFF
                     lk = msg.get("look") or [0, 0]
                     s["look"] = (float(lk[0]), float(lk[1]))
-                elif t in ("reset", "set_game"):
+                elif t == "reset":
                     s["reset"] = msg.get("game")
+                elif t == "set_game":
+                    g, d = msg.get("game"), s["dream"]
+                    # Same model: change game mid-dream so it morphs. Otherwise start that game's dream.
+                    if d is not None and g in d.pack.games:
+                        d.set_game(g)
+                    else:
+                        s["reset"] = g
                 elif t == "config" and "sampler_steps" in msg:
                     s["steps"] = max(1, min(16, int(msg["sampler_steps"])))
                     if s["dream"] is not None:
                         s["dream"].steps = s["steps"]
                 elif t == "stream":
                     s["fps"] = max(1.0, min(60.0, float(msg.get("fps", 15))))
+                elif t == "quality":
+                    s["sharp"] = msg.get("value") == "sharp" and state.sharp_path is not None
+                    if s["dream"] is not None:
+                        s["dream"].sharpener = Sharpener(state.sharp_path) if s["sharp"] else None
+                elif t == "autoplay":
+                    s["autoplay"] = bool(msg.get("on"))
                 elif t == "pause":
                     s["paused"] = True
                 elif t == "resume":
                     s["paused"] = False
-                elif t in ("blend", "side_by_side"):
+                elif t == "blend":
+                    d = s["dream"]
+                    try:
+                        if msg.get("a") is None:
+                            if d is not None:
+                                d.set_game(d.game)
+                        elif d is None:
+                            raise KeyError("start a dream first")
+                        else:
+                            d.set_blend(msg["a"], msg["b"], float(msg.get("alpha", 0.5)))
+                    except KeyError as e:
+                        await ws.send_text(json.dumps({"t": "error", "msg": str(e).strip("'")}))
+                elif t == "side_by_side":
                     await ws.send_text(
-                        json.dumps({"t": "error", "msg": f"{t} isn't available for this dream yet"})
+                        json.dumps({"t": "error", "msg": "side by side isn't available yet"})
                     )
 
         async def generate():
@@ -238,12 +283,19 @@ def create_app(state: EngineState, token: str) -> FastAPI:
                             json.dumps({"t": "error", "msg": f"no dream installed for {gid}"})
                         )
                     else:
-                        s["dream"] = Dream(pack, steps=s["steps"])
+                        s["dream"] = Dream(pack, steps=s["steps"], game=gid)
+                        if s["sharp"]:
+                            s["dream"].sharpener = Sharpener(state.sharp_path)
                         frame = await asyncio.to_thread(s["dream"].reset)
                         await ws.send_bytes(encode_webp(frame))
                 d = s["dream"]
                 if d is not None and not s["paused"]:
-                    frame = await asyncio.to_thread(d.step, s["buttons"], s["look"])
+                    if s["autoplay"] and d.pack.has_policy_for(d.game):
+                        # Dream mode: a policy picks the keys from the dream's own frames.
+                        b, lk = await asyncio.to_thread(d.policy_action)
+                    else:
+                        b, lk = s["buttons"], s["look"]
+                    frame = await asyncio.to_thread(d.step, b, lk)
                     await ws.send_bytes(encode_webp(frame))
                     if time.monotonic() - last_stats > 1.0:
                         last_stats = time.monotonic()
