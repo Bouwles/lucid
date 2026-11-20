@@ -63,6 +63,60 @@
   let controlsVisible = $state(true);
   let toolbarIdle = $state(false);
   let explainOpen = $state(false);
+  // The dream waits on its first frame until a key is pressed, and P pauses and resumes it.
+  let waiting = $state(true);
+  // What this dream model supports (from the engine's hello).
+  let dreamGames = $state<string[]>([]);
+  let canBlend = $state(false);
+  let canAutoplay = $state(false);
+  let canSharp = $state(false);
+  let sharp = $state(false);
+  let autoplay = $state(false);
+  let currentGame = $state("");
+  let blendWith = $state("");
+  let blendAlpha = $state(0);
+
+  function switchGame(g: string, e?: Event): void {
+    if (e instanceof MouseEvent) giveBack(e);
+    currentGame = g;
+    blendAlpha = 0;
+    send({ t: "set_game", game: g });
+  }
+
+  function setBlend(): void {
+    if (!blendWith || blendWith === currentGame || blendAlpha <= 0) {
+      send({ t: "blend", a: null });
+    } else {
+      send({ t: "blend", a: currentGame, b: blendWith, alpha: blendAlpha });
+    }
+  }
+
+  function setQuality(on: boolean, e: MouseEvent): void {
+    giveBack(e);
+    sharp = on;
+    send({ t: "quality", value: on ? "sharp" : "fast" });
+  }
+
+  function toggleAutoplay(e: MouseEvent): void {
+    giveBack(e);
+    autoplay = !autoplay;
+    send({ t: "autoplay", on: autoplay });
+    if (autoplay && waiting) startDreaming();
+  }
+  let userPaused = $state(false);
+
+  function startDreaming(): void {
+    if (!waiting && !userPaused) return;
+    waiting = false;
+    userPaused = false;
+    send({ t: "resume" });
+  }
+
+  function togglePause(): void {
+    if (waiting) return startDreaming();
+    userPaused = !userPaused;
+    send({ t: userPaused ? "pause" : "resume" });
+  }
 
   let canvas = $state<HTMLCanvasElement>();
   let stage = $state<HTMLDivElement>();
@@ -151,6 +205,14 @@
     const res = msg.resolution as [number, number] | undefined;
     if (res) setResolution(res[0], res[1]);
     serverSteps = Number(msg.sampler_steps);
+    // Games that share one multi-game model can switch in place and blend.
+    const blendGames = (msg.blend_games as string[] | undefined) ?? [];
+    dreamGames = blendGames.includes(id) ? blendGames : [];
+    canBlend = dreamGames.length > 1;
+    canAutoplay = ((msg.autoplay_available as string[] | undefined) ?? []).includes(id);
+    canSharp = Boolean(msg.sharp_available);
+    currentGame = id;
+    blendWith = dreamGames.find((g) => g !== id) ?? "";
     helloSeen = true;
     status = "playing";
 
@@ -158,7 +220,10 @@
       send({ t: "config", sampler_steps: chosenSteps });
     }
     send({ t: "reset", game: id });
-    if (isHidden()) send({ t: "pause" });
+    // Hold on the first frame until the player presses a key (smoke tests start straight away).
+    waiting = !smokeActive();
+    userPaused = false;
+    if (waiting || isHidden()) send({ t: "pause" });
     lastSentButtons = -1;
     updateSending();
   }
@@ -222,12 +287,18 @@
       }
       return;
     }
+    if (e.code === "KeyP" && !inToolbar(e.target) && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      togglePause();
+      return;
+    }
     const name = KEY_MAP[e.code];
     if (!name || e.ctrlKey || e.metaKey || e.altKey) return;
     // While a toolbar control has keyboard focus, Space and arrows operate it.
     if (inToolbar(e.target)) return;
     e.preventDefault();
     heldKeys.add(e.code);
+    if (waiting) startDreaming();
     onInputChange();
   }
 
@@ -257,7 +328,7 @@
         lastSentButtons = 0;
         send({ t: "pause" });
       }
-    } else if (helloSeen) {
+    } else if (helloSeen && !waiting && !userPaused) {
       send({ t: "resume" });
     }
     updateSending();
@@ -380,6 +451,9 @@
   function resetDream(e: MouseEvent): void {
     giveBack(e);
     send({ t: "reset", game: id });
+    waiting = true;
+    userPaused = false;
+    send({ t: "pause" });
   }
 
   onMount(() => {
@@ -442,12 +516,39 @@
       </div>
 
       <div class="seg" role="radiogroup" aria-label="Quality">
-        <button role="radio" aria-checked="true" onclick={giveBack}>Fast</button>
-        <span title="Needs the upsampler, coming later">
-          <button role="radio" aria-checked="false" disabled aria-describedby="sharp-why">Sharp</button>
+        <button role="radio" aria-checked={!sharp} onclick={(e) => setQuality(false, e)}>Fast</button>
+        <span title={canSharp ? "A second network upscales each frame to 128 px. Slower." : "The upsampler isn't installed"}>
+          <button role="radio" aria-checked={sharp} disabled={!canSharp} onclick={(e) => setQuality(true, e)}>Sharp</button>
         </span>
-        <span id="sharp-why" class="visually-hidden">Needs the upsampler, coming later.</span>
       </div>
+
+      {#if canAutoplay}
+        <button class="tb" aria-pressed={autoplay} onclick={toggleAutoplay}
+          title="A small network that learned from the autopilot presses the keys, inside the dream"
+          >{autoplay ? "Stop playing itself" : "Let it play itself"}</button
+        >
+      {/if}
+
+      {#if canBlend}
+        <div class="seg" role="radiogroup" aria-label="Game">
+          <span class="seg-label" aria-hidden="true">Game</span>
+          {#each dreamGames as g (g)}
+            <button role="radio" aria-checked={currentGame === g} onclick={(e) => switchGame(g, e)}
+              >{g.replace("-", " ")}</button
+            >
+          {/each}
+        </div>
+        <label class="blend" title="An experiment: mix two games inside one model">
+          <span>Blend with</span>
+          <select bind:value={blendWith} onchange={setBlend}>
+            {#each dreamGames.filter((g) => g !== currentGame) as g (g)}
+              <option value={g}>{g.replace("-", " ")}</option>
+            {/each}
+          </select>
+          <input type="range" min="0" max="1" step="0.05" bind:value={blendAlpha} oninput={setBlend}
+            aria-label="Blend amount" />
+        </label>
+      {/if}
 
       <button class="tb" onclick={resetDream}>Reset dream</button>
       <button class="tb" onclick={showControls}>Controls</button>
@@ -492,6 +593,18 @@
       aria-label="Dream frames"
     ></canvas>
 
+    {#if status === "playing" && (waiting || userPaused)}
+      <div class="hold" role="status">
+        {#if waiting}
+          <p class="hold-title">Press a key to start dreaming</p>
+          <p class="hold-sub">Nothing moves until you do. P pauses.</p>
+        {:else}
+          <p class="hold-title">Paused</p>
+          <p class="hold-sub">Press P to carry on.</p>
+        {/if}
+      </div>
+    {/if}
+
     <div class="stats num" aria-label="Performance">
       <span><span class="k">FPS</span> {fps != null ? fps.toFixed(1) : "–"}</span>
       <span><span class="k">Frame</span> {frameMs != null ? `${frameMs.toFixed(1)} ms` : "–"}</span>
@@ -528,6 +641,53 @@
 </div>
 
 <style>
+  .blend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--t-sm);
+    color: var(--muted);
+  }
+
+  .blend select {
+    background: var(--bg-raised);
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .blend input[type="range"] {
+    width: 90px;
+    accent-color: var(--accent);
+  }
+
+  .hold {
+    position: absolute;
+    left: 50%;
+    bottom: 12%;
+    transform: translateX(-50%);
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--r-md);
+    background: rgb(15 17 21 / 0.82);
+    text-align: center;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hold-title {
+    font-family: var(--font-display);
+    font-size: var(--t-md);
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .hold-sub {
+    color: var(--muted);
+    font-size: var(--t-sm);
+    margin: 0.2rem 0 0;
+  }
+
   .player {
     position: relative;
     height: 100%;
@@ -630,6 +790,7 @@
   }
 
   .seg button {
+    white-space: nowrap;
     min-width: 30px;
     height: 28px;
     padding: 0 0.55rem;
