@@ -87,8 +87,9 @@ jobs:
         run: |
           npx tauri build --bundles app
           mkdir -p src-tauri/target/release/bundle/dmg
+          version=$(node -p "require('./src-tauri/tauri.conf.json').version")
           hdiutil create -volname LUCID -srcfolder src-tauri/target/release/bundle/macos/LUCID.app \
-            -ov -format UDZO src-tauri/target/release/bundle/dmg/LUCID_0.2.0_aarch64.dmg
+            -ov -format UDZO "src-tauri/target/release/bundle/dmg/LUCID_${version}_aarch64.dmg"
 
       - name: Smoke test
         run: python scripts/smoke_app.py
