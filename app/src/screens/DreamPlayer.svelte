@@ -517,7 +517,7 @@
 
       <div class="seg" role="radiogroup" aria-label="Quality">
         <button role="radio" aria-checked={!sharp} onclick={(e) => setQuality(false, e)}>Fast</button>
-        <span title={canSharp ? "A second network upscales each frame to 128 px. Slower." : "The upsampler isn't installed"}>
+        <span title={canSharp ? "A second network upscales each frame to 128 px. Slower." : "The upsampler isn't good enough yet: it came out grainier than plain upscaling"}>
           <button role="radio" aria-checked={sharp} disabled={!canSharp} onclick={(e) => setQuality(true, e)}>Sharp</button>
         </span>
       </div>
