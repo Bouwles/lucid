@@ -34,6 +34,12 @@
     KeyZ: "action_a",
     KeyX: "action_b",
   };
+  // The keys each game's dream was trained on, shown lit while the dream is receiving them.
+  const GAME_KEYS: Record<string, [string, string][]> = {
+    "drift-kit": [["left", "← Steer"], ["right", "Steer →"], ["up", "↑ Gas"], ["down", "↓ Brake"], ["action_a", "Z Drift"]],
+    bramble: [["left", "← Run"], ["right", "Run →"], ["jump", "Space Jump"], ["action_a", "Z Dash"]],
+    outpost: [["left", "← Strafe"], ["right", "Strafe →"], ["up", "↑ Forward"], ["down", "↓ Back"], ["jump", "Space Jump"], ["action_a", "Z Fire"], ["action_b", "X Reload"]],
+  };
   // Fewer than 3 steps turns these dreams into noise, so it isn't offered.
   const SAMPLER_STEPS = [3, 4, 6];
   const SEND_INTERVAL_MS = 1000 / 20;
@@ -126,6 +132,7 @@
   let helloSeen = false;
   let sendTimer: ReturnType<typeof setInterval> | undefined;
   let lastSentButtons = -1;
+  let shownButtons = $state(0); // what the dream is receiving right now
   const heldKeys = new Set<string>();
   let overlayTimer: ReturnType<typeof setTimeout> | undefined;
   let idleTimer: ReturnType<typeof setTimeout> | undefined;
@@ -254,6 +261,7 @@
   function sendAct(): void {
     const buttons = currentButtons();
     lastSentButtons = buttons;
+    shownButtons = buttons;
     send({ t: "act", buttons, look: [0, 0] });
   }
 
@@ -605,6 +613,14 @@
       </div>
     {/if}
 
+    {#if status === "playing" && GAME_KEYS[currentGame || id] && !autoplay}
+      <ul class="held" aria-label="Keys the dream is receiving">
+        {#each GAME_KEYS[currentGame || id] as [name, label] (name)}
+          <li class:on={(shownButtons & (1 << BUTTON_BITS[name])) !== 0}>{label}</li>
+        {/each}
+      </ul>
+    {/if}
+
     <div class="stats num" aria-label="Performance">
       <span><span class="k">FPS</span> {fps != null ? fps.toFixed(1) : "–"}</span>
       <span><span class="k">Frame</span> {frameMs != null ? `${frameMs.toFixed(1)} ms` : "–"}</span>
@@ -767,6 +783,36 @@
     background: rgb(15 17 21 / 0.8);
     font-size: var(--t-xs);
     z-index: 1;
+  }
+
+  .held {
+    position: absolute;
+    top: 0.75rem;
+    left: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    max-width: calc(50% - 1rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--t-xs);
+    z-index: 1;
+  }
+
+  .held li {
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--r-sm);
+    background: rgb(15 17 21 / 0.8);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .held li.on {
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-color: var(--accent);
   }
 
   .stats .k {
