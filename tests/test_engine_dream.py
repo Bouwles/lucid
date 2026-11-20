@@ -189,3 +189,22 @@ def test_multi_game_reset_starts_from_the_right_game(tmp_path):
     for seed in range(5):
         assert Dream(pack, seed=seed, game="y").reset().mean() > 150
         assert Dream(pack, seed=seed, game="x").reset().mean() < 50
+
+
+def test_first_step_keeps_the_start_keys_aligned(pack):
+    """Training pairs context frame j with the action taken at frame j; the player's key is last."""
+    p = DreamPack.load(pack[0].path)
+    st = dict(p.starts())
+    st["buttons"] = np.zeros_like(st["buttons"])
+    for j in range(st["buttons"].shape[1]):
+        st["buttons"][:, j, j] = 1  # a different key in every slot
+    p._starts = st
+    d = Dream(p, seed=0)
+    d.reset(2)
+    recorded = st["buttons"][2].astype(np.float32)
+    seen = {}
+    real_generate = d.generate
+    d.generate = lambda **kw: (seen.setdefault("b", d.buttons.copy()), real_generate(**kw))[1]
+    d.step(2)  # hold right
+    assert np.array_equal(seen["b"][0, :-1], recorded[:-1])
+    assert np.array_equal(seen["b"][0, -1], unpack_buttons(2))

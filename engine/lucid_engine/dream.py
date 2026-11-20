@@ -290,8 +290,12 @@ class Dream:
         i = int(idx[self.rng.integers(len(idx))]) if start is None else int(idx[start % len(idx)])
         frames = st["frames"][i]  # uint8 [k, H, W, 3]
         self.context = (frames.astype(np.float32) / 127.5 - 1.0).transpose(0, 3, 1, 2)[None]
-        self.buttons = st["buttons"][i].astype(np.float32)[None]
-        self.look = st["look"][i].astype(np.float32)[None]
+        # In training, the action at slot j is the one taken while seeing context frame j, so the
+        # last slot belongs to the player's next key. step() drops the oldest slot and appends
+        # that key, so start one slot back (repeating the first) to keep the start's keys aligned.
+        b, lk = st["buttons"][i].astype(np.float32), st["look"][i].astype(np.float32)
+        self.buttons = np.concatenate([b[:1], b[:-1]])[None]
+        self.look = np.concatenate([lk[:1], lk[:-1]])[None]
         return self.current_frame()
 
     def policy_action(self, threshold: float = 0.5) -> tuple[int, tuple[float, float]]:
