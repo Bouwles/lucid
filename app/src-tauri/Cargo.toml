@@ -1,6 +1,6 @@
 [package]
 name = "lucid"
-version = "0.3.0"
+version = "0.3.1"
 description = "LUCID desktop app: play games and their dreams"
 authors = ["Paul Nercessian"]
 license = "MIT"
