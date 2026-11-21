@@ -1,20 +1,20 @@
 [
   {
     "id": "drift-kit",
-    "url": "https://github.com/Bouwles/lucid/releases/download/dream-packs-v3/drift-kit.zip",
+    "url": "https://github.com/Bouwles/lucid/releases/download/dream-packs-v4/drift-kit.zip",
     "sha256": "b1cb2f39b602ffede6f1943e5046fb61521d6aaa62154f6139ff7ae65255d74e",
     "size_bytes": 45406929
   },
   {
     "id": "bramble",
-    "url": "https://github.com/Bouwles/lucid/releases/download/dream-packs-v3/bramble.zip",
+    "url": "https://github.com/Bouwles/lucid/releases/download/dream-packs-v4/bramble.zip",
     "sha256": "125b57850634eca838a473213dd3a2fb763d5238a3d6e1dca5336528ad023142",
     "size_bytes": 45901449
   },
   {
     "id": "outpost",
-    "url": "https://github.com/Bouwles/lucid/releases/download/dream-packs-v3/outpost.zip",
-    "sha256": "60c4566253652c072ad1d3780b1e090f6d7f9a3101dc740a8a1e0fd6f4ea3a06",
-    "size_bytes": 46207902
+    "url": "https://github.com/Bouwles/lucid/releases/download/dream-packs-v4/outpost.zip",
+    "sha256": "c3dd3188ebfe314185fe3c58bba61af653dd31bd5fbaefaed88ada72d6f148d1",
+    "size_bytes": 46346900
   }
 ]
