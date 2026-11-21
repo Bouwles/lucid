@@ -48,7 +48,7 @@ Choices I made along the way, with the reason for each.
 
 **The test track is retired.** It was only a pipeline check and its dream didn't respond to keys, so it's gone from the app. Its files are kept outside the repo.
 
-**Pick dreams by looking at them, not only by the control score.** The inverse dynamics model can be fooled: dreams that melted into mush scored higher on some keys than sharp ones. Each candidate dream now also gets a 40-step frame strip with recorded keys, plus contrast and sharpness against real frames over time. Drift Kit and Outpost keep their first models because the retrained ones melted. Bramble uses the retrained one.
+**Pick dreams by looking at them, not only by the control score.** The inverse dynamics model can be fooled: dreams that melted into mush scored higher on some keys than sharp ones. Each candidate dream now also gets a 40-step frame strip with recorded keys, plus contrast and sharpness against real frames over time. After the first round, Drift Kit and Outpost kept their first models because the retrained ones melted, and Bramble used the retrained one. After the second round (140 more minutes on the larger dataset `games_v3`, which adds a second round of mostly-random-key footage), Outpost uses the new model because it is sharper over 40 steps and the IDM sees more of five of its seven keys (reload and back went down). Bramble's new model kept dying in the dream and Drift Kit's melted, so they stay as they were.
 
 **One dream per game, not one model for all three.** The multi-game model (150 minutes on all three games) melted within 5 to 10 steps, so live switching and blending stay off. The engine and app support them, so a better multi-game pack only needs to be dropped in.
 

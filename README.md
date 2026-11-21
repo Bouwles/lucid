@@ -26,7 +26,7 @@ The strip at the top is a single real prediction. The model starts from pure noi
 
 LUCID is a desktop app with three games of its own: **Drift Kit** (a low-poly racer), **Bramble** (a side-scrolling platformer) and **Outpost** (a first-person arena shooter). You can play each real game, then play its dream: the same game imagined by the network, with no game engine running.
 
-> **Where it's at:** the app, the three games and a dream of each are done. Each dream was trained for 30 to 70 minutes on my laptop, so they look right for a while, but they follow the controls only part of the time (numbers below). That's the main thing I'm working on. A small network can also play each dream by itself, and one trained only inside Bramble's dream went far further in the real game than a copy of my autopilot (and a little further than random keys).
+> **Where it's at:** the app, the three games and a dream of each are done. Each dream was trained for between 30 minutes and about three hours on my laptop, so they look right for a while, but they follow the controls only part of the time (numbers below). That's the main thing I'm working on. A small network can also play each dream by itself, and one trained only inside Bramble's dream went far further in the real game than a copy of my autopilot (and a little further than random keys).
 
 ## See it run
 
@@ -44,8 +44,8 @@ The dreams run at about 9 frames per second on my MacBook's CPU (ONNX Runtime, 3
 
 | | Drift Kit | Bramble | Outpost |
 |---|---|---|---|
-| Training | 4,075 steps, 30 min | 4,801 + 4,170 steps, 38 + 30 min | 4,040 steps, 30 min |
-| Recorded play | 167,519 logic ticks | 213,512 logic ticks, then about 59,000 more with random keys | 187,841 logic ticks |
+| Training | 4,075 steps, 30 min | 4,801 + 4,170 steps, 38 + 30 min | 4,040 + 26,080 steps, 30 + 140 min |
+| Recorded play | 167,519 logic ticks | 213,512 logic ticks, then about 59,000 more with random keys | 187,841 logic ticks, then about 164,000 more over two rounds, mostly with random keys |
 | Hold a key in the dream: how often the IDM sees it | accelerate 74%, steer 31 to 55%, brake 19% | run left 59%, run right 63%, jump 15% | not reliable yet (see below) |
 | How well the IDM reads keys in real footage | 73 to 90% | 67 to 91% | 61 to 78% |
 | Dream speed (CPU) | 9 FPS | 9 FPS | 9 FPS |
@@ -115,7 +115,8 @@ It also saves a failure gallery: the rollouts that broke down fastest, so I can 
 - **Outpost's numbers can't be trusted yet.** Even on real Outpost footage the inverse dynamics model only reads the keys 61 to 78% of the time, because a first-person camera changes everything at once. I need a better way to measure it.
 - **It doesn't fool a classifier.** On the earlier test game, a small CNN told real frames from dreamed ones 92% of the time (50% would mean it can't tell).
 - **One model for all three games melts.** I trained a single model on all three games for two and a half hours, so you could switch games live and blend them. Halfway through, its control scores looked better than the single-game dreams on some keys (and much worse on Bramble's), but the frames turned into mush within 5 to 10 steps, and they still do at the end. The IDM was reading noise. So the app still uses one dream per game, and blending stays switched off.
-- **Retraining on random-key footage helped Bramble only.** Recording with keys held at random stops the model guessing the key from the picture. Bramble's dream got sharper and follows left more often (49% to 59%), though it also trained 30 minutes longer, so not all of that is the data. Drift Kit's and Outpost's retrained dreams scored higher on some keys but melted within a few steps, so they keep their first versions. Lesson: always look at the frames, not just the control score.
+- **Retraining on random-key footage helps some games and breaks others.** Recording with keys held at random stops the model guessing the key from the picture. The first round helped Bramble: its dream got sharper and follows left more often (49% to 59%), though it also trained 30 minutes longer, so not all of that is the data. Drift Kit's and Outpost's retrained dreams scored higher on some keys but melted within a few steps, so they kept their first versions.
+- **A longer second round helped Outpost only.** I recorded more random-key footage, with 30% of the random holds pressing nothing, and trained each dream for 140 more minutes. Outpost's new dream stays sharper over 40 steps than the old one, and the IDM sees strafe left 89% of the time against 77% (strafe right 66% against 56%, fire 34% against 27%, from 64 starts, so the smaller gaps are within noise), but reload and back went down (19% against 30%, 67% against 69%). It also trained 140 minutes longer, so not all of that is the data, and the IDM is weak on Outpost (see above). It ships. Bramble's new dream faded into the grey game-over screen in all six test strips, though only one of the six real clips died, so it doesn't ship. Drift Kit's turned to grey mush within 5 to 9 steps, faster than the old one, even though the IDM scored it higher on steering, brake and drift at every guidance scale. Lesson: always look at the frames, not just the control score.
 - **The upsampler is worse than plain upscaling.** A diffusion model that turns 64x64 dreams into 128x128 trained for 45 minutes and scored LPIPS 0.193 against 0.142 for bilinear upscaling (PSNR 25.1 dB against 28.4) at its last validation, and looked grainier. The button for it is in the app but turned off.
 - Smaller bugs worth remembering: YAML reads `3e-4` as text, Chrome's `/json/new` cuts an unencoded URL at the first `&`, and a stuck-in-mid-air jump isn't the dream's fault.
 
